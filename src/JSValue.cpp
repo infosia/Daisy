@@ -18,13 +18,17 @@ namespace Daisy {
 
 	JSValue::JSValue(const JSValue& rhs) DAISY_NOEXCEPT
 		: js_context__(rhs.js_context__)
-		, js_api_value__(rhs.js_api_value__) {
+		, js_api_value__(rhs.js_api_value__)
+		, js_object_properties_map__(rhs.js_object_properties_map__)
+		, js_value_temporary__(rhs.js_value_temporary__) {
 		retain();
 	}
 
 	JSValue::JSValue(JSValue&& rhs) DAISY_NOEXCEPT
 		: js_context__(rhs.js_context__)
-		, js_api_value__(rhs.js_api_value__) {
+		, js_api_value__(rhs.js_api_value__)
+		, js_object_properties_map__(rhs.js_object_properties_map__)
+		, js_value_temporary__(rhs.js_value_temporary__) {
 		retain();
 	}
 
@@ -98,6 +102,8 @@ namespace Daisy {
 		DAISY_JSVALUE_LOCK_GUARD;
 		std::swap(js_context__, other.js_context__);
 		std::swap(js_api_value__, other.js_api_value__);
+		std::swap(js_object_properties_map__, other.js_object_properties_map__);
+		std::swap(js_value_temporary__, other.js_value_temporary__);
 	}
 
 	std::unordered_map<std::intptr_t, std::tuple<jerry_api_data_type_t, std::size_t>> JSValue::js_api_value_retain_count_map__;
@@ -113,7 +119,6 @@ namespace Daisy {
 		} else {
 			return;
 		}
-
 		const auto position = js_api_value_retain_count_map__.find(key);
 		const bool found    = position != js_api_value_retain_count_map__.end();
 
@@ -128,6 +133,7 @@ namespace Daisy {
 			assert(inserted);
 		}
 	}
+
 
 	void JSValue::release() {
 		DAISY_JSVALUE_LOCK_GUARD_STATIC;
@@ -153,9 +159,18 @@ namespace Daisy {
 				js_api_value_retain_count_map__.erase(key);
 				const auto js_value_type = std::get<0>(tuple);
 				if (js_value_type == JERRY_API_DATA_TYPE_STRING) {
-					jerry_api_release_string(reinterpret_cast<jerry_api_string_t*>(key));
+					if (!js_value_temporary__) {
+						jerry_api_release_string(reinterpret_cast<jerry_api_string_t*>(key));
+					}
 				} else if (js_value_type == JERRY_API_DATA_TYPE_OBJECT) {
-					jerry_api_release_object(reinterpret_cast<jerry_api_object_t*>(key));
+					const auto api_object_ptr = reinterpret_cast<jerry_api_object_t*>(key);
+					const auto position = JSObject::js_object_external_functions_map__.find(api_object_ptr);
+					if (position != JSObject::js_object_external_functions_map__.end()) {
+						JSObject::js_object_external_functions_map__.erase(api_object_ptr);
+					}
+					if (!js_value_temporary__) {
+						jerry_api_release_object(api_object_ptr);
+					}
 				}
 			} else {
 				js_api_value_retain_count_map__[key] = tuple;

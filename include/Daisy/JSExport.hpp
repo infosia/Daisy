@@ -20,7 +20,7 @@ namespace Daisy {
 
 	    }
 		static JSExportClass<T> js_class__;
-		static void AddFunctionProperty(const std::string& name, CallAsFunctionCallback callback);
+		static void AddFunctionProperty(const std::string& name, JSObjectCallAsFunctionCallback callback);
 
 	};
 	
@@ -28,7 +28,7 @@ namespace Daisy {
 	JSExportClass<T> JSExport<T>::js_class__;
 
 	template<typename T>
-	void JSExport<T>::AddFunctionProperty(const std::string& name, CallAsFunctionCallback callback) {
+	void JSExport<T>::AddFunctionProperty(const std::string& name, JSObjectCallAsFunctionCallback callback) {
 		js_class__.AddFunctionProperty(name, callback);
 	}
 

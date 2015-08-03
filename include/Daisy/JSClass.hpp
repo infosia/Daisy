@@ -8,6 +8,7 @@
 #define _DAISY_JSCLASS_HPP_
 
 #include "Daisy/detail/JSBase.hpp"
+#include "jerry.h"
 #include <functional>
 #include <vector>
 #include <unordered_map>
@@ -18,7 +19,7 @@ namespace Daisy {
 	class JSValue;
 	class JSObject;
 	
-	typedef std::function<JSValue(JSObject, JSObject, const std::vector<JSValue>&)> CallAsFunctionCallback;
+	typedef std::function<JSValue(JSObject, JSObject, const std::vector<JSValue>&)> JSObjectCallAsFunctionCallback;
 	typedef std::function<void(const std::uintptr_t&)> JSObjectFinalizeCallback;
 
 	class DAISY_EXPORT JSClass {
@@ -31,11 +32,10 @@ namespace Daisy {
 		JSClass& operator=(JSClass) DAISY_NOEXCEPT;
 		void swap(JSClass&)         DAISY_NOEXCEPT;
 		
-		void AddFunctionProperty(const std::string& name, CallAsFunctionCallback callback);
+		void AddFunctionProperty(const std::string& name, JSObjectCallAsFunctionCallback callback);
 
-		virtual void JSObjectInitializeCallback(const JSContext& js_context, JSObject& this_object) const {
-			
-		}
+		virtual JSObject JSObjectMakeFunctionWithCallback(const JSContext& js_context, const std::string& name, JSObjectCallAsFunctionCallback) const;
+		virtual void JSObjectInitializeCallback(const JSContext& js_context, JSObject& this_object) const;
 
 	protected:
 
@@ -55,7 +55,7 @@ namespace Daisy {
 		// need to be exported from a DLL.
 #pragma warning(push)
 #pragma warning(disable: 4251)
-		std::unordered_map<std::string, CallAsFunctionCallback> callAsFunction_names_map__;
+		std::unordered_map<std::string, JSObjectCallAsFunctionCallback> prototype_functions_map__;
 #pragma warning(pop)
 	};
 	

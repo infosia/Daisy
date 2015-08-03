@@ -34,29 +34,31 @@ namespace Daisy {
 
 		virtual void SetPrivate(const std::uintptr_t& native_ptr, const JSObjectFinalizeCallback finalize_callback);
 
+		virtual bool HasProperty(const std::string& name);
+		virtual JSValue GetProperty(const std::string& name);
+		virtual void SetProperty(const std::string& name, JSValue js_value);
+
 		JSObject(const JSContext&)     DAISY_NOEXCEPT;
 		JSObject(const JSContext&, const JSClass&)     DAISY_NOEXCEPT;
 		virtual ~JSObject()            DAISY_NOEXCEPT;
 		JSObject(const JSObject&)      DAISY_NOEXCEPT;
 		JSObject(JSObject&&)           DAISY_NOEXCEPT;
 		JSObject& operator=(JSObject)  DAISY_NOEXCEPT;
-		void swap(JSObject&)           DAISY_NOEXCEPT;
+
+		JSObject(const JSContext& js_context, const jerry_api_value_t& js_api_value) DAISY_NOEXCEPT;
+		JSObject(const JSContext& js_context, const jerry_api_object_t* js_api_object) DAISY_NOEXCEPT;
 
 		// Silence 4251 on Windows since private member variables do not
 		// need to be exported from a DLL.
 #pragma warning(push)
 #pragma warning(disable: 4251)
 		static std::unordered_map<std::uintptr_t, JSObjectFinalizeCallback> js_object_finalizeCallback_map__;
+		static std::unordered_map<const jerry_api_object_t*, JSObjectCallAsFunctionCallback> js_object_external_functions_map__;
 #pragma warning(pop)
 
 	protected:
-		friend JSContext;
-		friend JSValue;
-		JSObject(const JSContext& js_context, const jerry_api_value_t& js_api_value) DAISY_NOEXCEPT;
-		JSObject(const JSContext& js_context, jerry_api_object_t* js_api_object) DAISY_NOEXCEPT;
-
 		static jerry_api_value_t MakeObject() DAISY_NOEXCEPT;
-		static jerry_api_value_t MakeObject(jerry_api_object_t* js_api_object) DAISY_NOEXCEPT;
+		static jerry_api_value_t MakeObject(const jerry_api_object_t* js_api_object) DAISY_NOEXCEPT;
 
 		// Prevent heap based objects.
 		void* operator new(std::size_t)     = delete; // #1: To prevent allocation of scalar objects

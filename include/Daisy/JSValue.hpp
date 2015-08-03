@@ -10,6 +10,7 @@
 #include "Daisy/detail/JSBase.hpp"
 #include "Daisy/JSContext.hpp"
 #include "jerry.h"
+#include <map>
 #include <unordered_map>
 #include <tuple>
 
@@ -70,12 +71,14 @@ namespace Daisy {
 			return js_api_value__.type == JERRY_API_DATA_TYPE_OBJECT;
 		}
 
-	protected:
-    	
-    	friend JSContext;
-    	friend JSObject;
     	JSValue(const JSContext& js_context, const jerry_api_value_t& js_api_value) DAISY_NOEXCEPT;
 
+		// Mark it temporary to avoid release at dtor.
+    	virtual void temporary() {
+    		js_value_temporary__ = true;
+    	}
+
+	protected:
 		// Prevent heap based objects.
 		void* operator new(std::size_t)     = delete; // #1: To prevent allocation of scalar objects
 		void* operator new [] (std::size_t) = delete; // #2: To prevent allocation of array of objects
@@ -103,7 +106,10 @@ namespace Daisy {
     // need to be exported from a DLL.
 #pragma warning(push)
 #pragma warning(disable: 4251)
+		// Set true to avoid release at dtor.
+		bool js_value_temporary__ { false };
 		jerry_api_value_t js_api_value__;
+		std::map<std::string, JSValue> js_object_properties_map__;
 		static std::unordered_map<std::intptr_t, std::tuple<jerry_api_data_type_t, std::size_t>> js_api_value_retain_count_map__;
 #pragma warning(pop)
 
