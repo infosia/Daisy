@@ -11,10 +11,9 @@
 #include "Daisy/JSClass.hpp"
 #include <vector>
 #include <functional>
+#include <memory>
 
 namespace Daisy {
-
-	class JSObject;
 
 	class DAISY_EXPORT JSObject final : public JSValue {
 	public:
@@ -32,6 +31,10 @@ namespace Daisy {
 			return js_api_value__.type == JERRY_API_DATA_TYPE_OBJECT && jerry_api_is_constructor(js_api_value__.v_object);
 		}
 
+		template<typename T>
+		std::shared_ptr<T> GetPrivate() const DAISY_NOEXCEPT;
+
+		virtual std::uintptr_t GetPrivate() const;
 		virtual void SetPrivate(const std::uintptr_t& native_ptr, const JSObjectFinalizeCallback finalize_callback);
 
 		virtual bool HasProperty(const std::string& name);
@@ -48,12 +51,15 @@ namespace Daisy {
 		JSObject(const JSContext& js_context, const jerry_api_value_t& js_api_value) DAISY_NOEXCEPT;
 		JSObject(const JSContext& js_context, const jerry_api_object_t* js_api_object) DAISY_NOEXCEPT;
 
+		static JSObject FindJSObjectFromPrivateData(const JSContext& js_context, const std::uintptr_t& native_ptr);
+
 		// Silence 4251 on Windows since private member variables do not
 		// need to be exported from a DLL.
 #pragma warning(push)
 #pragma warning(disable: 4251)
 		static std::unordered_map<std::uintptr_t, JSObjectFinalizeCallback> js_object_finalizeCallback_map__;
 		static std::unordered_map<const jerry_api_object_t*, JSObjectCallAsFunctionCallback> js_object_external_functions_map__;
+		static std::unordered_map<std::uintptr_t, const jerry_api_object_t*> js_private_data_to_js_object_ref_map__;
 #pragma warning(pop)
 
 	protected:
@@ -77,6 +83,11 @@ namespace Daisy {
 #endif  // DAISY_THREAD_SAFE	
 
 	};
+
+	template<typename T>
+	std::shared_ptr<T> JSObject::GetPrivate() const DAISY_NOEXCEPT {
+		return std::shared_ptr<T>(std::make_shared<JSObject>(*this), reinterpret_cast<T*>(GetPrivate()));
+	}
 
 } // namespace Daisy {
 

@@ -2,6 +2,7 @@
 #define _DAISY_JSEXPORTCLASS_HPP_
 
 #include "Daisy/JSClass.hpp"
+#include "Daisy/JSObject.hpp"
 
 namespace Daisy {
 

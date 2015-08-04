@@ -6,7 +6,10 @@
 
 #include "Daisy/JSContextGroup.hpp"
 #include "Daisy/JSContext.hpp"
+#include "Daisy/JSObject.hpp"
+#include "Daisy/JSValue.hpp"
 #include "jerry.h"
+#include <cassert>
 
 namespace Daisy {
 
@@ -31,6 +34,11 @@ namespace Daisy {
 	JSContextGroup::~JSContextGroup() DAISY_NOEXCEPT {
 		--retainCount;
 		if (retainCount == 0) {
+			// make sure we have properly cleaned up resources
+			assert(JSObject::js_private_data_to_js_object_ref_map__.empty());
+			assert(JSObject::js_object_external_functions_map__.empty());
+			assert(JSObject::js_object_finalizeCallback_map__.empty());
+			assert(JSValue::js_api_value_retain_count_map__.empty());
 			jerry_cleanup();
 		}
 	}

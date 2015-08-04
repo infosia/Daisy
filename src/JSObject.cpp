@@ -13,6 +13,7 @@ namespace Daisy {
 
 	std::unordered_map<const jerry_api_object_t*, JSObjectCallAsFunctionCallback> JSObject::js_object_external_functions_map__;
 	std::unordered_map<std::uintptr_t, JSObjectFinalizeCallback> JSObject::js_object_finalizeCallback_map__;
+	std::unordered_map<std::uintptr_t, const jerry_api_object_t*> JSObject::js_private_data_to_js_object_ref_map__;
 
 	jerry_api_value_t JSObject::MakeObject() DAISY_NOEXCEPT {
 		return MakeObject(jerry_api_create_object());
@@ -31,6 +32,13 @@ namespace Daisy {
 		assert(found);
 		position->second(native_ptr);
 		JSObject::js_object_finalizeCallback_map__.erase(native_ptr);
+		JSObject::js_private_data_to_js_object_ref_map__.erase(native_ptr);
+	}
+
+	std::uintptr_t JSObject::GetPrivate() const {
+		std::uintptr_t handle;
+		jerry_api_get_object_native_handle(js_api_value__.v_object, &handle);
+		return handle;
 	}
 
 	void JSObject::SetPrivate(const std::uintptr_t& native_ptr, const JSObjectFinalizeCallback finalize_callback) {
@@ -41,23 +49,46 @@ namespace Daisy {
 		js_object_finalizeCallback_map__.emplace(native_ptr, finalize_callback);
 
 		jerry_api_set_object_native_handle(js_api_value__.v_object, native_ptr, js_object_finalize_callback);
+
+		assert(js_private_data_to_js_object_ref_map__.find(native_ptr) == js_private_data_to_js_object_ref_map__.end());
+		js_private_data_to_js_object_ref_map__.emplace(native_ptr, js_api_value__.v_object);
+	}
+
+	JSObject JSObject::FindJSObjectFromPrivateData(const JSContext& js_context, const std::uintptr_t& native_ptr) {
+		const auto position = js_private_data_to_js_object_ref_map__.find(native_ptr);
+		const bool found    = position != js_private_data_to_js_object_ref_map__.end();
+
+		assert(found);
+
+		return JSObject(js_context, position->second);
 	}
 
 	bool JSObject::HasProperty(const std::string& name) {
-		return js_object_properties_map__.find(name) != js_object_properties_map__.end();
+		jerry_api_value_t js_value;
+		if (jerry_api_get_object_field_value(js_api_value__.v_object, reinterpret_cast<const jerry_api_char_t *>(name.c_str()), &js_value)) {
+			const auto has_property = (js_value.type != JERRY_API_DATA_TYPE_UNDEFINED);
+			jerry_api_release_value(&js_value);
+			return has_property;
+		}
+		return false;
 	}
 
 	JSValue JSObject::GetProperty(const std::string& name) {
-		if (!HasProperty(name)) {
-			return get_context().CreateUndefined();
+		jerry_api_value_t js_value;
+		if (jerry_api_get_object_field_value(js_api_value__.v_object, reinterpret_cast<const jerry_api_char_t *>(name.c_str()), &js_value)) {
+			jerry_api_release_value(&js_value);
+			return JSValue(js_context__, js_value);
 		}
-		return js_object_properties_map__.at(name);
+		return js_context__.CreateUndefined();
 	}
 
 	void JSObject::SetProperty(const std::string& name, JSValue js_value) {
 		auto value = static_cast<jerry_api_value_t>(js_value);
 		jerry_api_set_object_field_value(js_api_value__.v_object, reinterpret_cast<const jerry_api_char_t *>(name.c_str()), &value);
-		js_object_properties_map__.emplace(name, js_value);
+		if (js_object_properties_map__.find(name) != js_object_properties_map__.end()) {
+			js_object_properties_map__.erase(name);
+		}
+		js_object_properties_map__.emplace(name, js_value); // to prevent from GC
 	}
 
 	JSObject::JSObject(const JSContext& js_context) DAISY_NOEXCEPT 

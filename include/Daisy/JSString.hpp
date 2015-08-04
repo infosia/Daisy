@@ -33,6 +33,7 @@ namespace Daisy {
 	protected:
 		friend JSContext;
 		friend JSValue;
+		friend JSObject;
 
 		JSString(const JSContext& js_context, const jerry_api_value_t& js_api_value) DAISY_NOEXCEPT;
 		JSString(const JSContext& js_context, const std::string& value) DAISY_NOEXCEPT;

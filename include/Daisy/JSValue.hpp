@@ -79,6 +79,9 @@ namespace Daisy {
     	}
 
 	protected:
+
+		friend JSContextGroup;
+
 		// Prevent heap based objects.
 		void* operator new(std::size_t)     = delete; // #1: To prevent allocation of scalar objects
 		void* operator new [] (std::size_t) = delete; // #2: To prevent allocation of array of objects

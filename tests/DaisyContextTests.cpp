@@ -11,6 +11,7 @@
 #define XCTAssertFalse    ASSERT_FALSE
 
 #include "Daisy/daisy.hpp"
+#include <iostream>
 
 using namespace Daisy;
 
@@ -150,4 +151,70 @@ TEST(DaisyContextTests, UndefinedCast) {
   auto js_context = js_context_group.CreateContext();
   auto js_value = js_context.CreateUndefined();
   XCTAssertEqual("undefined", static_cast<std::string>(js_value));
+}
+
+TEST(DaisyContextTests, GetProperty_builtin) {
+  JSContextGroup js_context_group;
+  auto js_context = js_context_group.CreateContext();
+  auto global_object = js_context.get_global_object();
+  XCTAssertTrue(global_object.HasProperty("Math"));
+  XCTAssertTrue(global_object.HasProperty("Array"));
+  XCTAssertTrue(global_object.HasProperty("RegExp"));
+  XCTAssertTrue(global_object.HasProperty("Date"));
+  XCTAssertTrue(global_object.HasProperty("Boolean"));
+  XCTAssertTrue(global_object.HasProperty("Object"));
+}
+
+TEST(DaisyContextTests, GetProperty_Object_defineProperty) {
+  JSContextGroup js_context_group;
+  auto js_context = js_context_group.CreateContext();
+  std::string script = R"(
+var obj = {};
+obj.get_b = function() {
+  return 'dynamic';
+}
+Object.defineProperty(obj, 'b', {
+  get: obj.get_b,
+  enumerable: true,
+  configurable: true
+});
+obj.b;
+  )";
+  auto result = js_context.JSEvaluateScript(script);
+  XCTAssertEqual("dynamic", static_cast<std::string>(result));
+}
+
+TEST(DaisyContextTests, GetProperty_Boolean) {
+  JSContextGroup js_context_group;
+  auto js_context = js_context_group.CreateContext();
+  auto global_object = js_context.get_global_object();
+  XCTAssertFalse(global_object.HasProperty("testBoolean"));
+  global_object.SetProperty("testBoolean", js_context.CreateBoolean(false));
+  XCTAssertTrue(global_object.HasProperty("testBoolean"));
+  XCTAssertFalse(static_cast<bool>(global_object.GetProperty("testBoolean")));
+  global_object.SetProperty("testBoolean", js_context.CreateUndefined());
+}
+
+TEST(DaisyContextTests, GetProperty_String) {
+  JSContextGroup js_context_group;
+  auto js_context = js_context_group.CreateContext();
+  auto global_object = js_context.get_global_object();
+  XCTAssertFalse(global_object.HasProperty("testString"));
+  global_object.SetProperty("testString", js_context.CreateString("GetProperty_String"));
+  XCTAssertTrue(global_object.HasProperty("testString"));
+  auto js_property = global_object.GetProperty("testString");
+  XCTAssertEqual("GetProperty_String", static_cast<std::string>(js_property));
+  global_object.SetProperty("testString", js_context.CreateUndefined());
+}
+
+TEST(DaisyContextTests, GetProperty_Object) {
+  JSContextGroup js_context_group;
+  auto js_context = js_context_group.CreateContext();
+  auto global_object = js_context.get_global_object();
+  XCTAssertFalse(global_object.HasProperty("testObject"));
+  global_object.SetProperty("testObject", js_context.CreateObject());
+  XCTAssertTrue(global_object.HasProperty("testObject"));
+  auto js_property = global_object.GetProperty("testObject");
+  XCTAssertTrue(js_property.IsObject());
+  global_object.SetProperty("testObject", js_context.CreateUndefined());
 }
