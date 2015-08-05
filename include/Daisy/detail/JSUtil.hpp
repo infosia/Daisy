@@ -17,6 +17,7 @@ namespace Daisy {
 	namespace detail {
 		DAISY_EXPORT std::vector<jerry_api_value_t> to_vector(const std::vector<JSValue>&);
 		DAISY_EXPORT std::vector<JSValue> to_vector(const JSContext& js_context, const jerry_api_value_t[], const jerry_api_length_t);
+		DAISY_EXPORT void js_jerry_api_value_make_copy(const jerry_api_value_t& from, jerry_api_value_t* to);
 	} // namespace detail {
 } // namespace Daisy {
 

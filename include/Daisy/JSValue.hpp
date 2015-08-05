@@ -71,12 +71,11 @@ namespace Daisy {
 			return js_api_value__.type == JERRY_API_DATA_TYPE_OBJECT;
 		}
 
-    	JSValue(const JSContext& js_context, const jerry_api_value_t& js_api_value) DAISY_NOEXCEPT;
+		virtual void unmanaged() {
+			js_value_managed__ = false;
+		}
 
-		// Mark it temporary to avoid release at dtor.
-    	virtual void temporary() {
-    		js_value_temporary__ = true;
-    	}
+    	JSValue(const JSContext& js_context, const jerry_api_value_t& js_api_value, const bool& managed = true) DAISY_NOEXCEPT;
 
 	protected:
 
@@ -109,8 +108,7 @@ namespace Daisy {
     // need to be exported from a DLL.
 #pragma warning(push)
 #pragma warning(disable: 4251)
-		// Set true to avoid release at dtor.
-		bool js_value_temporary__ { false };
+		bool js_value_managed__ { true };
 		jerry_api_value_t js_api_value__;
 		std::map<std::string, JSValue> js_object_properties_map__;
 		static std::unordered_map<std::intptr_t, std::tuple<jerry_api_data_type_t, std::size_t>> js_api_value_retain_count_map__;

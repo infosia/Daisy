@@ -20,6 +20,7 @@ namespace Daisy {
 	class JSObject;
 	
 	typedef std::function<JSValue(JSObject, JSObject, const std::vector<JSValue>&)> JSObjectCallAsFunctionCallback;
+	typedef std::function<void(const JSContext&, JSObject, const std::vector<JSValue>&)> JSObjectCallAsConstructorCallback;
 	typedef std::function<void(const std::uintptr_t&)> JSObjectFinalizeCallback;
 
 	class DAISY_EXPORT JSClass {
@@ -35,7 +36,8 @@ namespace Daisy {
 		void AddFunctionProperty(const std::string& name, JSObjectCallAsFunctionCallback callback);
 
 		virtual JSObject JSObjectMakeFunctionWithCallback(const JSContext& js_context, const std::string& name, JSObjectCallAsFunctionCallback) const;
-		virtual void JSObjectInitializeCallback(const JSContext& js_context, JSObject& this_object) const;
+		virtual void ConstructorInitializeCallback(const JSContext& js_context, JSObject& this_object) const;
+		virtual JSObjectCallAsConstructorCallback getCallAsConstructorCallback() const;
 
 	protected:
 

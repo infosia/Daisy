@@ -27,4 +27,21 @@ namespace Daisy { namespace detail {
 		return js_value_vector;
 	}
 
+	void js_jerry_api_value_make_copy(const jerry_api_value_t& from, jerry_api_value_t* to) {
+		to->type   = from.type;
+		if (from.type == JERRY_API_DATA_TYPE_BOOLEAN) {
+			to->v_bool = from.v_bool;
+		} else if (from.type == JERRY_API_DATA_TYPE_UINT32) {
+			to->v_uint32  = from.v_uint32;
+		} else if (from.type == JERRY_API_DATA_TYPE_FLOAT32) {
+			to->v_float32 = from.v_float32;
+		} else if (from.type == JERRY_API_DATA_TYPE_FLOAT64) {
+			to->v_float64 = from.v_float64;
+		} else if (from.type == JERRY_API_DATA_TYPE_STRING) {
+			to->v_string  = from.v_string;
+		} else if (from.type == JERRY_API_DATA_TYPE_OBJECT) {
+			to->v_object  = from.v_object;
+		}
+	}
+
 }} // namespace Daisy { namespace detail {

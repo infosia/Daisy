@@ -16,10 +16,28 @@ namespace Daisy {
 		JSExportClass(JSExportClass&&)                 = default;
 		JSExportClass& operator=(JSExportClass&&)      = default;
 
-		virtual void JSObjectInitializeCallback(const JSContext& js_context, JSObject& this_object) const override;
+		virtual void ConstructorInitializeCallback(const JSContext& js_context, JSObject& this_object) const override;
+		virtual JSObjectCallAsConstructorCallback getCallAsConstructorCallback() const override {
+			return js_object_constructor_callback__;
+		}
+
+		virtual void SetParent(const JSClass& js_class) {
+			js_class_parent__ = js_class;
+		}
+
 	protected:
-		JSObjectFinalizeCallback js_object_finalize_callback = [](const std::uintptr_t& native_ptr) {
+		JSClass js_class_parent__;
+
+		JSObjectFinalizeCallback js_object_finalize_callback__ = [](const std::uintptr_t& native_ptr) {
 			delete reinterpret_cast<T*>(native_ptr);
+		};
+		JSObjectCallAsConstructorCallback js_object_constructor_callback__ = [](const JSContext& js_context, JSObject this_object, const std::vector<JSValue>& arguments) {
+			auto native_object_ptr = new T(js_context);
+			native_object_ptr->postInitialize(this_object);
+			this_object.SetPrivate(reinterpret_cast<std::uintptr_t>(native_object_ptr), [](const std::uintptr_t& native_ptr) {
+				delete reinterpret_cast<T*>(native_ptr);
+			});
+			native_object_ptr->postCallAsConstructor(js_context, arguments);
 		};
 	};
 
@@ -32,11 +50,13 @@ namespace Daisy {
 	}
 
 	template<typename T>
-	void JSExportClass<T>::JSObjectInitializeCallback(const JSContext& js_context, JSObject& this_object) const {
-		JSClass::JSObjectInitializeCallback(js_context, this_object);
+	void JSExportClass<T>::ConstructorInitializeCallback(const JSContext& js_context, JSObject& this_object) const {
+		js_class_parent__.ConstructorInitializeCallback(js_context, this_object);
+
+		JSClass::ConstructorInitializeCallback(js_context, this_object);
 		auto native_object_ptr = new T(js_context);
 		native_object_ptr->postInitialize(this_object);
-		this_object.SetPrivate(reinterpret_cast<std::uintptr_t>(native_object_ptr), js_object_finalize_callback);
+		this_object.SetPrivate(reinterpret_cast<std::uintptr_t>(native_object_ptr), js_object_finalize_callback__);
 	}
 
 } // namespace Daisy {

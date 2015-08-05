@@ -85,7 +85,10 @@ namespace Daisy {
 
 	JSObject JSContext::CreateObject(const JSClass& js_class) const DAISY_NOEXCEPT {
 		DAISY_JSCONTEXT_LOCK_GUARD;
-		return JSObject(*this, js_class);
+		auto this_object = JSObject(*this, js_class);
+		js_class.ConstructorInitializeCallback(*this, this_object);
+		return this_object;
+
 	}
 
 	JSValue JSContext::JSEvaluateScript(const std::string& script) const {

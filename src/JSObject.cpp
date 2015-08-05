@@ -11,12 +11,48 @@
 
 namespace Daisy {
 
+	std::unordered_map<const jerry_api_object_t*, JSObjectCallAsConstructorCallback> JSObject::js_object_external_constructors_map__;
 	std::unordered_map<const jerry_api_object_t*, JSObjectCallAsFunctionCallback> JSObject::js_object_external_functions_map__;
 	std::unordered_map<std::uintptr_t, JSObjectFinalizeCallback> JSObject::js_object_finalizeCallback_map__;
 	std::unordered_map<std::uintptr_t, const jerry_api_object_t*> JSObject::js_private_data_to_js_object_ref_map__;
 
+	static bool js_api_object_constructor_function(
+				const jerry_api_object_t *function_object_ptr,
+				const jerry_api_value_t *this_object_ptr,
+				jerry_api_value_t *result_value_ptr,
+				const jerry_api_value_t js_api_arguments[],
+				const jerry_api_length_t argumentCount) {
+
+		const auto position = JSObject::js_object_external_constructors_map__.find(function_object_ptr);
+		assert(position != JSObject::js_object_external_constructors_map__.end());
+
+		auto callback = position->second;
+
+		// TODO: Use current context
+		JSContextGroup js_context_group;
+		const auto js_context = js_context_group.CreateContext();
+		const auto arguments = detail::to_vector(js_context, js_api_arguments, argumentCount);
+
+		JSObject this_object = JSObject(js_context, this_object_ptr->v_object, false);
+
+		callback(js_context, this_object, arguments);
+
+		return true;
+	}
+
+
 	jerry_api_value_t JSObject::MakeObject() DAISY_NOEXCEPT {
 		return MakeObject(jerry_api_create_object());
+	}
+
+	jerry_api_value_t JSObject::MakeConstructorObject(const JSClass& js_class) DAISY_NOEXCEPT {
+		auto js_api_object = MakeObject(jerry_api_create_external_function(js_api_object_constructor_function));
+
+		const auto position = JSObject::js_object_external_constructors_map__.find(js_api_object.v_object);
+		assert(position == JSObject::js_object_external_constructors_map__.end());
+		JSObject::js_object_external_constructors_map__.emplace(js_api_object.v_object, js_class.getCallAsConstructorCallback());
+
+		return js_api_object;
 	}
 
 	jerry_api_value_t JSObject::MakeObject(const jerry_api_object_t* js_api_object) DAISY_NOEXCEPT {
@@ -63,7 +99,7 @@ namespace Daisy {
 		return JSObject(js_context, position->second);
 	}
 
-	bool JSObject::HasProperty(const std::string& name) {
+	bool JSObject::HasProperty(const std::string& name) const {
 		jerry_api_value_t js_value;
 		if (jerry_api_get_object_field_value(js_api_value__.v_object, reinterpret_cast<const jerry_api_char_t *>(name.c_str()), &js_value)) {
 			const auto has_property = (js_value.type != JERRY_API_DATA_TYPE_UNDEFINED);
@@ -73,7 +109,7 @@ namespace Daisy {
 		return false;
 	}
 
-	JSValue JSObject::GetProperty(const std::string& name) {
+	JSValue JSObject::GetProperty(const std::string& name) const {
 		jerry_api_value_t js_value;
 		if (jerry_api_get_object_field_value(js_api_value__.v_object, reinterpret_cast<const jerry_api_char_t *>(name.c_str()), &js_value)) {
 			jerry_api_release_value(&js_value);
@@ -96,11 +132,7 @@ namespace Daisy {
 	}
 
 	JSObject::JSObject(const JSContext& js_context, const JSClass& js_class) DAISY_NOEXCEPT 
-		: JSValue(js_context, MakeObject()) {
-		// Create new JSObject, because you can't use *this here.
-		auto js_object = JSObject(js_context__, js_api_value__);
-		js_class.JSObjectInitializeCallback(js_context, js_object);
-		swap(js_object); // restore back properties etc
+		: JSValue(js_context, MakeConstructorObject(js_class)) {
 	}
 
 	JSObject::~JSObject() DAISY_NOEXCEPT {
@@ -118,8 +150,8 @@ namespace Daisy {
 		: JSValue(js_context, js_api_value) {
 	}
 
-	JSObject::JSObject(const JSContext& js_context, const jerry_api_object_t* js_api_object) DAISY_NOEXCEPT 
-		: JSValue(js_context, MakeObject(js_api_object)) {
+	JSObject::JSObject(const JSContext& js_context, const jerry_api_object_t* js_api_object, const bool& managed) DAISY_NOEXCEPT 
+		: JSValue(js_context, MakeObject(js_api_object), managed) {
 	}
 
 	JSObject JSObject::CallAsConstructor(const std::vector<JSValue>&  arguments) {
@@ -156,6 +188,12 @@ namespace Daisy {
 			std::cout << "[ERROR JSObject::CallAsFunction FAILED" << std::endl;
 		}
 		return JSValue(js_context__, js_api_value);
+	}
+
+	std::vector<std::string> JSObject::GetPropertyNames() const DAISY_NOEXCEPT {
+		DAISY_JSOBJECT_LOCK_GUARD;
+		// TODO:
+		return std::vector<std::string>();	
 	}
 
 	JSValue JSObject::operator()(const std::vector<JSValue>&  arguments, JSObject this_object) {

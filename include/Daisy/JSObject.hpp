@@ -37,9 +37,10 @@ namespace Daisy {
 		virtual std::uintptr_t GetPrivate() const;
 		virtual void SetPrivate(const std::uintptr_t& native_ptr, const JSObjectFinalizeCallback finalize_callback);
 
-		virtual bool HasProperty(const std::string& name);
-		virtual JSValue GetProperty(const std::string& name);
+		virtual bool HasProperty(const std::string& name) const;
+		virtual JSValue GetProperty(const std::string& name) const;
 		virtual void SetProperty(const std::string& name, JSValue js_value);
+		virtual std::vector<std::string> GetPropertyNames() const DAISY_NOEXCEPT;
 
 		JSObject(const JSContext&)     DAISY_NOEXCEPT;
 		JSObject(const JSContext&, const JSClass&)     DAISY_NOEXCEPT;
@@ -49,7 +50,7 @@ namespace Daisy {
 		JSObject& operator=(JSObject)  DAISY_NOEXCEPT;
 
 		JSObject(const JSContext& js_context, const jerry_api_value_t& js_api_value) DAISY_NOEXCEPT;
-		JSObject(const JSContext& js_context, const jerry_api_object_t* js_api_object) DAISY_NOEXCEPT;
+		JSObject(const JSContext& js_context, const jerry_api_object_t* js_api_object, const bool& managed = true) DAISY_NOEXCEPT;
 
 		static JSObject FindJSObjectFromPrivateData(const JSContext& js_context, const std::uintptr_t& native_ptr);
 
@@ -59,12 +60,14 @@ namespace Daisy {
 #pragma warning(disable: 4251)
 		static std::unordered_map<std::uintptr_t, JSObjectFinalizeCallback> js_object_finalizeCallback_map__;
 		static std::unordered_map<const jerry_api_object_t*, JSObjectCallAsFunctionCallback> js_object_external_functions_map__;
+		static std::unordered_map<const jerry_api_object_t*, JSObjectCallAsConstructorCallback> js_object_external_constructors_map__;
 		static std::unordered_map<std::uintptr_t, const jerry_api_object_t*> js_private_data_to_js_object_ref_map__;
 #pragma warning(pop)
 
 	protected:
 		static jerry_api_value_t MakeObject() DAISY_NOEXCEPT;
 		static jerry_api_value_t MakeObject(const jerry_api_object_t* js_api_object) DAISY_NOEXCEPT;
+		static jerry_api_value_t MakeConstructorObject(const JSClass& js_class) DAISY_NOEXCEPT;
 
 		// Prevent heap based objects.
 		void* operator new(std::size_t)     = delete; // #1: To prevent allocation of scalar objects

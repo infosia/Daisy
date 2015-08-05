@@ -20,7 +20,7 @@ namespace Daisy {
 		: js_context__(rhs.js_context__)
 		, js_api_value__(rhs.js_api_value__)
 		, js_object_properties_map__(rhs.js_object_properties_map__)
-		, js_value_temporary__(rhs.js_value_temporary__) {
+		, js_value_managed__(rhs.js_value_managed__) {
 		retain();
 	}
 
@@ -28,13 +28,14 @@ namespace Daisy {
 		: js_context__(rhs.js_context__)
 		, js_api_value__(rhs.js_api_value__)
 		, js_object_properties_map__(rhs.js_object_properties_map__)
-		, js_value_temporary__(rhs.js_value_temporary__) {
+		, js_value_managed__(rhs.js_value_managed__) {
 		retain();
 	}
 
-	JSValue::JSValue(const JSContext& js_context, const jerry_api_value_t& js_api_value) DAISY_NOEXCEPT
+	JSValue::JSValue(const JSContext& js_context, const jerry_api_value_t& js_api_value, const bool& managed) DAISY_NOEXCEPT
 		: js_context__(js_context)
-		, js_api_value__(js_api_value) {
+		, js_api_value__(js_api_value)
+		, js_value_managed__(managed) {
 		retain();
 	}
 
@@ -103,7 +104,7 @@ namespace Daisy {
 		std::swap(js_context__, other.js_context__);
 		std::swap(js_api_value__, other.js_api_value__);
 		std::swap(js_object_properties_map__, other.js_object_properties_map__);
-		std::swap(js_value_temporary__, other.js_value_temporary__);
+		std::swap(js_value_managed__, other.js_value_managed__);
 	}
 
 	std::unordered_map<std::intptr_t, std::tuple<jerry_api_data_type_t, std::size_t>> JSValue::js_api_value_retain_count_map__;
@@ -159,7 +160,7 @@ namespace Daisy {
 				js_api_value_retain_count_map__.erase(key);
 				const auto js_value_type = std::get<0>(tuple);
 				if (js_value_type == JERRY_API_DATA_TYPE_STRING) {
-					if (!js_value_temporary__) {
+					if (js_value_managed__) {
 						jerry_api_release_string(reinterpret_cast<jerry_api_string_t*>(key));
 					}
 				} else if (js_value_type == JERRY_API_DATA_TYPE_OBJECT) {
@@ -167,8 +168,9 @@ namespace Daisy {
 					const auto position = JSObject::js_object_external_functions_map__.find(api_object_ptr);
 					if (position != JSObject::js_object_external_functions_map__.end()) {
 						JSObject::js_object_external_functions_map__.erase(api_object_ptr);
+						JSObject::js_object_external_constructors_map__.erase(api_object_ptr);
 					}
-					if (!js_value_temporary__) {
+					if (js_value_managed__) {
 						jerry_api_release_object(api_object_ptr);
 					}
 				}

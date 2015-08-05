@@ -10,21 +10,19 @@
 namespace Daisy {
 
 	template<typename T>
-	using CallNamedFunctionCallback = std::function<JSValue(T&, const std::vector<JSValue>&, JSObject)>;
+	using CallNamedFunctionCallback = std::function<JSValue(T&, const std::vector<JSValue>&, JSObject&)>;
 
 	template<typename T>
 	class DAISY_EXPORT JSExport {
 		
 	public:
 		static JSExportClass<T> Class();
-		virtual ~JSExport() DAISY_NOEXCEPT {
-		}
+		virtual ~JSExport() DAISY_NOEXCEPT {}
 
 	protected:
-	    virtual void postInitialize(JSObject& js_object) {
-	    }
 		static JSExportClass<T> js_class__;
 		static void AddFunctionProperty(const std::string& name, CallNamedFunctionCallback<T> callback);
+		static void SetParent(const JSClass& js_class);
 	};
 	
 	template<typename T>
@@ -50,6 +48,11 @@ namespace Daisy {
 		});
 		return js_class__;
 	}
+
+	template<typename T>
+	void JSExport<T>::SetParent(const JSClass& js_class) {
+		js_class__.SetParent(js_class);
+	}
 	
 	class DAISY_EXPORT JSExportObject {
 	public:
@@ -57,8 +60,9 @@ namespace Daisy {
 			: js_context__(js_context) {
 		}
 
-		virtual ~JSExportObject() DAISY_NOEXCEPT {
-		}
+		virtual ~JSExportObject() DAISY_NOEXCEPT {}
+		virtual void postInitialize(JSObject& js_object) {}
+		virtual void postCallAsConstructor(const JSContext&, const std::vector<JSValue>&) {}
 		
 		virtual JSObject get_object() DAISY_NOEXCEPT {
 			return JSObject::FindJSObjectFromPrivateData(js_context__, reinterpret_cast<std::uintptr_t>(this));
@@ -66,6 +70,10 @@ namespace Daisy {
 
 		virtual JSContext get_context() {
 			return js_context__;
+		}
+
+		static void JSExportInitialize() {
+
 		}
 	protected:
 		JSContext js_context__;

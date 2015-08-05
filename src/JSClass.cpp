@@ -26,28 +26,20 @@ namespace Daisy {
 		: prototype_functions_map__(rhs.prototype_functions_map__) {
 	}
 
-	void JSClass::JSObjectInitializeCallback(const JSContext& js_context, JSObject& this_object) const {
-		// TODO: set static property here, because "prototype" is not defined
-		for (const auto v : prototype_functions_map__) {
-			this_object.SetProperty(v.first, JSObjectMakeFunctionWithCallback(js_context, v.first, v.second));
+	void JSClass::ConstructorInitializeCallback(const JSContext& js_context, JSObject& this_object) const {
+		if (!this_object.HasProperty("prototype")) {
+			auto js_object = js_context.CreateObject();
+			this_object.SetProperty("prototype", js_object);
 		}
-	}
 
-	static void js_jerry_api_value_make_copy(const jerry_api_value_t& from, jerry_api_value_t* to) {
-		to->type   = from.type;
-
-		if (from.type == JERRY_API_DATA_TYPE_BOOLEAN) {
-			to->v_bool = from.v_bool;
-		} else if (from.type == JERRY_API_DATA_TYPE_UINT32) {
-			to->v_uint32  = from.v_uint32;
-		} else if (from.type == JERRY_API_DATA_TYPE_FLOAT32) {
-			to->v_float32 = from.v_float32;
-		} else if (from.type == JERRY_API_DATA_TYPE_FLOAT64) {
-			to->v_float64 = from.v_float64;
-		} else if (from.type == JERRY_API_DATA_TYPE_STRING) {
-			to->v_string  = from.v_string;
-		} else if (from.type == JERRY_API_DATA_TYPE_OBJECT) {
-			to->v_object  = from.v_object;
+		auto proto_object = static_cast<JSObject>(this_object.GetProperty("prototype"));
+		for (const auto v : prototype_functions_map__) {
+			//
+			// NOTE: On HAL, there's no difference between object "static" property and prototype property
+			// so add it to both
+			//
+			this_object.SetProperty(v.first, JSObjectMakeFunctionWithCallback(js_context, v.first, v.second));
+			proto_object.SetProperty(v.first, JSObjectMakeFunctionWithCallback(js_context, v.first, v.second));
 		}
 	}
 
@@ -73,12 +65,16 @@ namespace Daisy {
 		auto callback_result = callback(function_object, this_object, arguments);
 		auto callback_result_value = static_cast<jerry_api_value_t>(callback_result);
 
-		// mark it temporary to avoid release at dtor.
-		callback_result.temporary();
+		// callback value should be considered "unmanaged" from Daisy
+		callback_result.unmanaged();
 
-		js_jerry_api_value_make_copy(callback_result_value, result_value_ptr);
+		detail::js_jerry_api_value_make_copy(callback_result_value, result_value_ptr);
 
 		return true;
+	}
+
+	JSObjectCallAsConstructorCallback JSClass::getCallAsConstructorCallback() const {
+		return nullptr;
 	}
 
 	JSObject JSClass::JSObjectMakeFunctionWithCallback(const JSContext& js_context, const std::string& name, JSObjectCallAsFunctionCallback callback) const {
