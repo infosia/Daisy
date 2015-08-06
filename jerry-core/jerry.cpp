@@ -40,7 +40,7 @@ const char *jerry_build_date = "Today";
 /**
  * Jerry engine build commit hash
  */
-const char *jerry_commit_hash = "c715a7cd1de6c498420ed024fb03674e5d74754d";
+const char *jerry_commit_hash = "9cc706d21dcf9134e0c6d4dc3496185e73254303";
 
 /**
  * Jerry engine build branch name

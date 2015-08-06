@@ -35,9 +35,11 @@
 #define RE_EXECUTE_RECURSION_LIMIT  1000
 
 /**
- * Limit of RegExp execetur matching steps
+ * RegExp flags
  */
-#define RE_EXECUTE_MATCH_LIMIT      10000
+#define RE_FLAG_GLOBAL              (1 << 0) /* ECMA-262 v5, 15.10.7.2 */
+#define RE_FLAG_IGNORE_CASE         (1 << 1) /* ECMA-262 v5, 15.10.7.3 */
+#define RE_FLAG_MULTILINE           (1 << 2) /* ECMA-262 v5, 15.10.7.4 */
 
 /**
  * RegExp executor context
@@ -47,7 +49,6 @@ typedef struct
   lit_utf8_iterator_t *saved_p; /**< saved result string pointers, ECMA 262 v5, 15.10.2.1, State */
   const lit_utf8_byte_t *input_start_p; /**< start of input pattern string */
   const lit_utf8_byte_t *input_end_p; /**< end of input pattern string */
-  uint32_t match_limit; /**< matching limit counter */
   uint32_t recursion_depth; /**< recursion depth counter */
   uint32_t num_of_captures; /**< number of capture groups */
   uint32_t num_of_non_captures; /**< number of non-capture groups */
@@ -59,9 +60,11 @@ extern ecma_completion_value_t
 ecma_op_create_regexp_object (ecma_string_t *pattern_p, ecma_string_t *flags_str_p);
 
 extern ecma_completion_value_t
-ecma_regexp_exec_helper (ecma_object_t *obj_p,
-                         re_bytecode_t *bc_p,
-                         lit_utf8_iterator_t *iter_p);
+ecma_regexp_exec_helper (ecma_value_t, ecma_value_t, bool);
+
+extern ecma_char_t
+re_canonicalize (ecma_char_t ch,
+                 bool is_ignorecase);
 
 /**
  * @}

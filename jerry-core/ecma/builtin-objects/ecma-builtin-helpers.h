@@ -34,7 +34,11 @@ extern ecma_completion_value_t ecma_builtin_helper_array_concat_value (ecma_obje
                                                                        uint32_t *length,
                                                                        ecma_value_t);
 extern uint32_t ecma_builtin_helper_array_index_normalize (ecma_number_t index, uint32_t length);
-extern uint32_t ecma_builtin_helper_string_index_normalize (ecma_number_t index, uint32_t length);
+extern uint32_t ecma_builtin_helper_string_index_normalize (ecma_number_t index, uint32_t length, bool nan_to_zero);
+extern ecma_completion_value_t ecma_builtin_helper_string_prototype_object_index_of (ecma_value_t this_arg,
+                                                                                     ecma_value_t arg1,
+                                                                                     ecma_value_t arg2,
+                                                                                     bool firstIndex);
 extern ecma_completion_value_t ecma_builtin_helper_def_prop (ecma_object_t *obj_p,
                                                              ecma_string_t *index_p,
                                                              ecma_value_t value,
@@ -120,7 +124,10 @@ extern void ecma_date_insert_num_with_sep (ecma_string_t **str_p,
                                            ecma_number_t num,
                                            lit_magic_string_id_t magic_str_id,
                                            uint32_t length);
-extern ecma_completion_value_t ecma_date_to_string (ecma_value_t this_arg, ecma_date_timezone_t timezone);
+
+extern ecma_completion_value_t ecma_date_value_to_string (ecma_number_t datetime_num, ecma_date_timezone_t timezone);
+extern ecma_completion_value_t ecma_date_get_primitive_value (ecma_value_t this_arg);
+
 #endif /* !CONFIG_ECMA_COMPACT_PROFILE_DISABLE_DATE_BUILTIN */
 
 typedef struct

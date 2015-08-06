@@ -141,7 +141,7 @@ ecma_date_construct_helper (const ecma_value_t *args, /**< arguments passed to t
 
   if (ecma_is_completion_value_empty (ret_value))
   {
-    if (!ecma_number_is_nan (year))
+    if (!ecma_number_is_nan (year) && !ecma_number_is_infinity (year))
     {
       /* 8. */
       int32_t y = ecma_number_to_int32 (year);
@@ -327,10 +327,7 @@ ecma_builtin_date_parse (ecma_value_t this_arg __attr_unused___, /**< this argum
           && !ecma_number_is_nan (time))
       {
         lit_utf8_iterator_incr (&iter);
-        time = ecma_date_utc (ecma_date_make_time (hours,
-                                                   minutes,
-                                                   seconds,
-                                                   milliseconds));
+        time = ecma_date_make_time (hours, minutes, seconds, milliseconds);
       }
       else if (!lit_utf8_iterator_is_eos (&iter)
                && (lit_utf8_iterator_peek_next (&iter) == '+'
@@ -470,13 +467,20 @@ ecma_builtin_date_now (ecma_value_t this_arg __attr_unused___) /**< this argumen
  * @return completion-value
  */
 ecma_completion_value_t
-ecma_builtin_date_dispatch_call (const ecma_value_t *arguments_list_p, /**< arguments list */
-                                 ecma_length_t arguments_list_len) /**< number of arguments */
+ecma_builtin_date_dispatch_call (const ecma_value_t *arguments_list_p __attr_unused___, /**< arguments list */
+                                 ecma_length_t arguments_list_len __attr_unused___) /**< number of arguments */
 {
-  /* FIXME:
-   *       Fix this, after Date.prototype.toString is finished.
-   */
-  return ecma_builtin_date_dispatch_construct (arguments_list_p, arguments_list_len);
+  ecma_completion_value_t ret_value = ecma_make_empty_completion_value ();
+
+  ECMA_TRY_CATCH (now_val,
+                  ecma_builtin_date_now (ecma_make_simple_value (ECMA_SIMPLE_VALUE_UNDEFINED)),
+                  ret_value);
+
+  ret_value = ecma_date_value_to_string (*ecma_get_number_from_value (now_val), ECMA_DATE_LOCAL);
+
+  ECMA_FINALIZE (now_val);
+
+  return ret_value;
 } /* ecma_builtin_date_dispatch_call */
 
 /**

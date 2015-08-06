@@ -26,6 +26,7 @@ public:
 	}
 
 	static void JSExportInitialize() {
+		JSExport<Widget>::SetClassVersion(1);
 		JSExport<Widget>::SetParent(JSExport<JSExportObject>::Class());
 		JSExport<Widget>::AddFunctionProperty("testString",    std::mem_fn(&Widget::testString));
 		JSExport<Widget>::AddFunctionProperty("testBoolean",   std::mem_fn(&Widget::testBoolean));
@@ -94,6 +95,7 @@ public:
 	}
 
 	static void JSExportInitialize() {
+		JSExport<ChildWidget>::SetClassVersion(1);
 		JSExport<ChildWidget>::SetParent(JSExport<Widget>::Class());
 		JSExport<ChildWidget>::AddFunctionProperty("testChildMethod", std::mem_fn(&ChildWidget::testChildMethod));
 	}	

@@ -23,6 +23,7 @@ namespace Daisy {
 		static JSExportClass<T> js_class__;
 		static void AddFunctionProperty(const std::string& name, CallNamedFunctionCallback<T> callback);
 		static void SetParent(const JSClass& js_class);
+		static void SetClassVersion(const std::uint32_t& class_version);
 	};
 	
 	template<typename T>
@@ -52,6 +53,10 @@ namespace Daisy {
 	template<typename T>
 	void JSExport<T>::SetParent(const JSClass& js_class) {
 		js_class__.SetParent(js_class);
+	}
+
+	template<typename T>
+		void JSExport<T>::SetClassVersion(const std::uint32_t& class_version) {
 	}
 	
 	class DAISY_EXPORT JSExportObject {

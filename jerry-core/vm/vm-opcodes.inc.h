@@ -38,11 +38,6 @@ VM_OP_3 (call_n,                CALL_N,
          function_var_idx,      VM_OP_ARG_TYPE_VARIABLE,
          arg_list,              VM_OP_ARG_TYPE_INTEGER_CONST)
 
-VM_OP_3 (native_call,           NATIVE_CALL,
-         lhs,                   VM_OP_ARG_TYPE_VARIABLE,
-         name,                  VM_OP_ARG_TYPE_INTEGER_CONST,
-         arg_list,              VM_OP_ARG_TYPE_INTEGER_CONST)
-
 VM_OP_3 (construct_n,           CONSTRUCT_N,
          lhs,                   VM_OP_ARG_TYPE_VARIABLE,
          name_lit_idx,          VM_OP_ARG_TYPE_VARIABLE,
@@ -63,13 +58,15 @@ VM_OP_1 (retval,                RETVAL,
 
 VM_OP_0 (ret,                   RET)
 
-VM_OP_2 (array_decl,            ARRAY_DECL,
+VM_OP_3 (array_decl,            ARRAY_DECL,
          lhs,                   VM_OP_ARG_TYPE_VARIABLE,
-         list,                  VM_OP_ARG_TYPE_INTEGER_CONST)
+         list_1,                VM_OP_ARG_TYPE_INTEGER_CONST,
+         list_2,                VM_OP_ARG_TYPE_INTEGER_CONST)
 
-VM_OP_2 (obj_decl,              OBJ_DECL,
+VM_OP_3 (obj_decl,              OBJ_DECL,
          lhs,                   VM_OP_ARG_TYPE_VARIABLE,
-         list,                  VM_OP_ARG_TYPE_INTEGER_CONST)
+         list_1,                VM_OP_ARG_TYPE_INTEGER_CONST,
+         list_2,                VM_OP_ARG_TYPE_INTEGER_CONST)
 
 VM_OP_3 (prop_getter,           PROP_GETTER,
          lhs,                   VM_OP_ARG_TYPE_VARIABLE,

@@ -31,6 +31,10 @@
 #include "jrt-libc-includes.h"
 #include "lit-char-helpers.h"
 
+#ifndef CONFIG_ECMA_COMPACT_PROFILE_DISABLE_REGEXP_BUILTIN
+#include "ecma-regexp-object.h"
+#endif /* !CONFIG_ECMA_COMPACT_PROFILE_DISABLE_REGEXP_BUILTIN */
+
 #ifndef CONFIG_ECMA_COMPACT_PROFILE_DISABLE_STRING_BUILTIN
 
 #define ECMA_BUILTINS_INTERNAL
@@ -336,7 +340,7 @@ ecma_builtin_string_prototype_object_index_of (ecma_value_t this_arg, /**< this 
   const lit_utf8_size_t original_size = ecma_string_get_size (original_str_p);
 
   /* 4b, 6 */
-  ecma_length_t start = ecma_builtin_helper_string_index_normalize (pos_num, original_len);
+  ecma_length_t start = ecma_builtin_helper_string_index_normalize (pos_num, original_len, true);
 
   /* 7 */
   ecma_string_t *search_str_p = ecma_get_string_from_value (search_str_val);
@@ -440,7 +444,7 @@ ecma_builtin_string_prototype_object_last_index_of (ecma_value_t this_arg, /**< 
                                                     ecma_value_t arg1, /**< routine's first argument */
                                                     ecma_value_t arg2) /**< routine's second argument */
 {
-  ECMA_BUILTIN_CP_UNIMPLEMENTED (this_arg, arg1, arg2);
+  return ecma_builtin_helper_string_prototype_object_index_of (this_arg, arg1, arg2, false);
 } /* ecma_builtin_string_prototype_object_last_index_of */
 
 /**
@@ -560,15 +564,10 @@ ecma_builtin_string_prototype_object_match (ecma_value_t this_arg, /**< this arg
 
     JERRY_ASSERT (ecma_is_value_boolean (global_value));
 
-    ecma_value_t exec_arguments[1] = { this_to_string_value };
-
     if (!ecma_is_value_true (global_value))
     {
       /* 7. */
-      ret_value = ecma_builtin_regexp_prototype_dispatch_routine (LIT_MAGIC_STRING_EXEC,
-                                                                  regexp_value,
-                                                                  exec_arguments,
-                                                                  1);
+      ret_value = ecma_regexp_exec_helper (regexp_value, this_to_string_value, false);
     }
     else
     {
@@ -608,10 +607,7 @@ ecma_builtin_string_prototype_object_match (ecma_value_t this_arg, /**< this arg
       {
         /* 8.f.i. */
         ECMA_TRY_CATCH (exec_value,
-                        ecma_builtin_regexp_prototype_dispatch_routine (LIT_MAGIC_STRING_EXEC,
-                                                                        regexp_value,
-                                                                        exec_arguments,
-                                                                        1),
+                        ecma_regexp_exec_helper (regexp_value, this_to_string_value, false),
                         ret_value);
 
         if (ecma_is_value_null (exec_value))
@@ -829,13 +825,10 @@ ecma_builtin_string_prototype_object_replace_match (ecma_builtin_replace_search_
 
   if (context_p->is_regexp)
   {
-    ecma_value_t exec_arguments[1] = { context_p->input_string };
-
     ECMA_TRY_CATCH (match_value,
-                    ecma_builtin_regexp_prototype_dispatch_routine (LIT_MAGIC_STRING_EXEC,
-                                                                    context_p->regexp_or_search_string,
-                                                                    exec_arguments,
-                                                                    1),
+                    ecma_regexp_exec_helper (context_p->regexp_or_search_string,
+                                             context_p->input_string,
+                                             false),
                     ret_value);
 
     if (!ecma_is_value_null (match_value))
@@ -1504,7 +1497,6 @@ ecma_builtin_string_prototype_object_replace (ecma_value_t this_arg, /**< this a
 
   return ret_value;
 } /* ecma_builtin_string_prototype_object_replace */
-#endif /* !CONFIG_ECMA_COMPACT_PROFILE_DISABLE_REGEXP_BUILTIN */
 
 /**
  * The String.prototype object's 'search' routine
@@ -1517,10 +1509,90 @@ ecma_builtin_string_prototype_object_replace (ecma_value_t this_arg, /**< this a
  */
 static ecma_completion_value_t
 ecma_builtin_string_prototype_object_search (ecma_value_t this_arg, /**< this argument */
-                                             ecma_value_t arg) /**< routine's argument */
+                                             ecma_value_t regexp_arg) /**< routine's argument */
 {
-  ECMA_BUILTIN_CP_UNIMPLEMENTED (this_arg, arg);
+  ecma_completion_value_t ret_value = ecma_make_empty_completion_value ();
+
+  /* 1. */
+  ECMA_TRY_CATCH (check_coercible_value,
+                  ecma_op_check_object_coercible (this_arg),
+                  ret_value);
+
+  /* 2. */
+  ECMA_TRY_CATCH (to_string_value,
+                  ecma_op_to_string (this_arg),
+                  ret_value);
+
+  ecma_value_t regexp_value = ecma_make_simple_value (ECMA_SIMPLE_VALUE_EMPTY);
+
+  /* 3. */
+  if (ecma_is_value_object (regexp_arg)
+      && ecma_object_get_class_name (ecma_get_object_from_value (regexp_arg)) == LIT_MAGIC_STRING_REGEXP_UL)
+  {
+    regexp_value = ecma_copy_value (regexp_arg, true);
+  }
+  else
+  {
+    /* 4. */
+    ecma_value_t regexp_arguments[1] = { regexp_arg };
+
+    ECMA_TRY_CATCH (new_regexp_value,
+                    ecma_builtin_regexp_dispatch_construct (regexp_arguments, 1),
+                    ret_value);
+
+    regexp_value = ecma_copy_value (new_regexp_value, true);
+
+    ECMA_FINALIZE (new_regexp_value);
+  }
+
+  /* 5. */
+  if (ecma_is_completion_value_empty (ret_value))
+  {
+    ECMA_TRY_CATCH (match_result,
+                    ecma_regexp_exec_helper (regexp_value, to_string_value, true),
+                    ret_value);
+
+    ecma_number_t offset = -1;
+
+    if (!ecma_is_value_null (match_result))
+    {
+      JERRY_ASSERT (ecma_is_value_object (match_result));
+
+      ecma_object_t *match_object_p = ecma_get_object_from_value (match_result);
+      ecma_string_t *index_string_p = ecma_get_magic_string (LIT_MAGIC_STRING_INDEX);
+
+      ECMA_TRY_CATCH (index_value,
+                      ecma_op_object_get (match_object_p, index_string_p),
+                      ret_value);
+
+      JERRY_ASSERT (ecma_is_value_number (index_value));
+
+      offset = *ecma_get_number_from_value (index_value);
+
+      ECMA_FINALIZE (index_value);
+      ecma_deref_ecma_string (index_string_p);
+    }
+
+    if (ecma_is_completion_value_empty (ret_value))
+    {
+      ecma_number_t *offset_number_p = ecma_alloc_number ();
+      *offset_number_p = offset;
+
+      ret_value = ecma_make_normal_completion_value (ecma_make_number_value (offset_number_p));
+    }
+
+    ECMA_FINALIZE (match_result);
+    ecma_free_value (regexp_value, true);
+  }
+
+  ECMA_FINALIZE (to_string_value);
+  ECMA_FINALIZE (check_coercible_value);
+
+  /* 6. */
+  return ret_value;
 } /* ecma_builtin_string_prototype_object_search */
+
+#endif /* !CONFIG_ECMA_COMPACT_PROFILE_DISABLE_REGEXP_BUILTIN */
 
 /**
  * The String.prototype object's 'slice' routine
@@ -1650,7 +1722,7 @@ ecma_builtin_string_prototype_object_substring (ecma_value_t this_arg, /**< this
 
   ecma_length_t start = 0, end = len;
 
-  start = ecma_builtin_helper_string_index_normalize (start_num, len);
+  start = ecma_builtin_helper_string_index_normalize (start_num, len, true);
 
   /* 5, 7 */
   if (ecma_is_value_undefined (arg2))
@@ -1663,7 +1735,7 @@ ecma_builtin_string_prototype_object_substring (ecma_value_t this_arg, /**< this
                                  arg2,
                                  ret_value);
 
-    end = ecma_builtin_helper_string_index_normalize (end_num, len);
+    end = ecma_builtin_helper_string_index_normalize (end_num, len, true);
 
     ECMA_OP_TO_NUMBER_FINALIZE (end_num);
   }
@@ -1937,24 +2009,25 @@ ecma_builtin_string_prototype_object_trim (ecma_value_t this_arg) /**< this argu
 
   /* 3 */
   const lit_utf8_size_t size = ecma_string_get_size (original_string_p);
-  const ecma_length_t length = ecma_string_get_size (original_string_p);
 
   /* Workaround: avoid repeated call of ecma_string_get_char_at_pos() because its overhead */
   lit_utf8_byte_t *original_utf8_str_p = (lit_utf8_byte_t *) mem_heap_alloc_block (size + 1,
                                                                                    MEM_HEAP_ALLOC_SHORT_TERM);
   ecma_string_to_utf8_string (original_string_p, original_utf8_str_p, (ssize_t) size);
 
+  const ecma_length_t length = lit_utf8_string_length (original_utf8_str_p, size);
+
+  lit_utf8_iterator_t iter = lit_utf8_iterator_create (original_utf8_str_p, size);
+
   uint32_t prefix = 0, postfix = 0;
   uint32_t new_len = 0;
 
-  while (prefix < length)
+  while (!lit_utf8_iterator_is_eos (&iter))
   {
-    ecma_char_t next_char = lit_utf8_string_code_unit_at (original_utf8_str_p,
-                                                          size,
-                                                          prefix);
+    ecma_char_t current_char = lit_utf8_iterator_read_next (&iter);
 
-    if (lit_char_is_white_space (next_char)
-        || lit_char_is_line_terminator (next_char))
+    if (lit_char_is_white_space (current_char)
+        || lit_char_is_line_terminator (current_char))
     {
       prefix++;
     }
@@ -1964,13 +2037,13 @@ ecma_builtin_string_prototype_object_trim (ecma_value_t this_arg) /**< this argu
     }
   }
 
-  while (postfix < length - prefix)
+  lit_utf8_iterator_seek_eos (&iter);
+  while (!lit_utf8_iterator_is_bos (&iter))
   {
-    ecma_char_t next_char = lit_utf8_string_code_unit_at (original_utf8_str_p,
-                                                          size,
-                                                          length - postfix - 1);
-    if (lit_char_is_white_space (next_char)
-        || lit_char_is_line_terminator (next_char))
+    ecma_char_t current_char = lit_utf8_iterator_read_prev (&iter);
+
+    if (lit_char_is_white_space (current_char)
+        || lit_char_is_line_terminator (current_char))
     {
       postfix++;
     }
@@ -1979,8 +2052,7 @@ ecma_builtin_string_prototype_object_trim (ecma_value_t this_arg) /**< this argu
       break;
     }
   }
-
-  new_len = prefix < size ? size - prefix - postfix : 0;
+  new_len = prefix < length ? length - prefix - postfix : 0;
 
   ecma_string_t *new_str_p = ecma_string_substr (original_string_p, prefix, prefix + new_len);
 

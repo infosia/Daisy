@@ -18,7 +18,6 @@
 #include "serializer.h"
 #include "stack.h"
 #include "jsp-early-error.h"
-#include "opcodes-native-call.h"
 
 static idx_t temp_name, max_temp_name;
 
@@ -221,46 +220,6 @@ tmp_operand (void)
   return ret;
 }
 
-static uint8_t
-name_to_native_call_id (operand obj)
-{
-  if (obj.type != OPERAND_LITERAL)
-  {
-    return OPCODE_NATIVE_CALL__COUNT;
-  }
-  if (lit_literal_equal_type_cstr (lit_get_literal_by_cp (obj.data.lit_id), "LEDToggle"))
-  {
-    return OPCODE_NATIVE_CALL_LED_TOGGLE;
-  }
-  else if (lit_literal_equal_type_cstr (lit_get_literal_by_cp (obj.data.lit_id), "LEDOn"))
-  {
-    return OPCODE_NATIVE_CALL_LED_ON;
-  }
-  else if (lit_literal_equal_type_cstr (lit_get_literal_by_cp (obj.data.lit_id), "LEDOff"))
-  {
-    return OPCODE_NATIVE_CALL_LED_OFF;
-  }
-  else if (lit_literal_equal_type_cstr (lit_get_literal_by_cp (obj.data.lit_id), "LEDOnce"))
-  {
-    return OPCODE_NATIVE_CALL_LED_ONCE;
-  }
-  else if (lit_literal_equal_type_cstr (lit_get_literal_by_cp (obj.data.lit_id), "wait"))
-  {
-    return OPCODE_NATIVE_CALL_WAIT;
-  }
-  else if (lit_literal_equal_type_cstr (lit_get_literal_by_cp (obj.data.lit_id), "print"))
-  {
-    return OPCODE_NATIVE_CALL_PRINT;
-  }
-  return OPCODE_NATIVE_CALL__COUNT;
-}
-
-static bool
-is_native_call (operand obj)
-{
-  return name_to_native_call_id (obj) < OPCODE_NATIVE_CALL__COUNT;
-}
-
 static op_meta
 create_op_meta_for_res_and_obj (vm_instr_t (*getop) (idx_t, idx_t, idx_t), operand *res, operand *obj)
 {
@@ -335,29 +294,6 @@ create_op_meta_for_obj (vm_instr_t (*getop) (idx_t, idx_t), operand *obj)
 }
 
 static op_meta
-create_op_meta_for_native_call (operand res, operand obj)
-{
-  JERRY_ASSERT (is_native_call (obj));
-  op_meta ret;
-  switch (res.type)
-  {
-    case OPERAND_TMP:
-    {
-      const vm_instr_t instr = getop_native_call (res.data.uid, name_to_native_call_id (obj), INVALID_VALUE);
-      ret = create_op_meta_000 (instr);
-      break;
-    }
-    case OPERAND_LITERAL:
-    {
-      const vm_instr_t instr = getop_native_call (LITERAL_TO_REWRITE, name_to_native_call_id (obj), INVALID_VALUE);
-      ret = create_op_meta_100 (instr, res.data.lit_id);
-      break;
-    }
-  }
-  return ret;
-}
-
-static op_meta
 create_op_meta_for_vlt (varg_list_type vlt, operand *res, operand *obj)
 {
   op_meta ret;
@@ -368,14 +304,7 @@ create_op_meta_for_vlt (varg_list_type vlt, operand *res, operand *obj)
     case VARG_CALL_EXPR:
     {
       JERRY_ASSERT (obj != NULL);
-      if (is_native_call (*obj))
-      {
-        ret = create_op_meta_for_native_call (*res, *obj);
-      }
-      else
-      {
-        ret = create_op_meta_for_res_and_obj (getop_call_n, res, obj);
-      }
+      ret = create_op_meta_for_res_and_obj (getop_call_n, res, obj);
       break;
     }
     case VARG_FUNC_DECL:
@@ -387,13 +316,15 @@ create_op_meta_for_vlt (varg_list_type vlt, operand *res, operand *obj)
     case VARG_ARRAY_DECL:
     {
       JERRY_ASSERT (obj == NULL);
-      ret = create_op_meta_for_obj (getop_array_decl, res);
+      operand empty = empty_operand ();
+      ret = create_op_meta_for_res_and_obj (getop_array_decl, res, &empty);
       break;
     }
     case VARG_OBJ_DECL:
     {
       JERRY_ASSERT (obj == NULL);
-      ret = create_op_meta_for_obj (getop_obj_decl, res);
+      operand empty = empty_operand ();
+      ret = create_op_meta_for_res_and_obj (getop_obj_decl, res, &empty);
       break;
     }
   }
@@ -1116,18 +1047,31 @@ dump_varg_header_for_rewrite (varg_list_type vlt, operand obj)
 }
 
 operand
-rewrite_varg_header_set_args_count (uint8_t args_count)
+rewrite_varg_header_set_args_count (size_t args_count)
 {
+  /*
+   * FIXME:
+   *       Remove formal parameters / arguments number from instruction,
+   *       after ecma-values collection would become extendable (issue #310).
+   *       In the case, each 'varg' instruction would just append corresponding
+   *       argument / formal parameter name to values collection.
+   */
+
   op_meta om = serializer_get_op_meta (STACK_TOP (varg_headers));
   switch (om.op.op_idx)
   {
     case VM_OP_FUNC_EXPR_N:
     case VM_OP_CONSTRUCT_N:
     case VM_OP_CALL_N:
-    case VM_OP_NATIVE_CALL:
     {
       const operand res = tmp_operand ();
-      om.op.data.func_expr_n.arg_list = args_count;
+      if (args_count > 255)
+      {
+        PARSE_ERROR (JSP_EARLY_ERROR_SYNTAX,
+                     "No more than 255 formal parameters / arguments are currently supported",
+                     LIT_ITERATOR_POS_ZERO);
+      }
+      om.op.data.func_expr_n.arg_list = (idx_t) args_count;
       om.op.data.func_expr_n.lhs = res.data.uid;
       serializer_rewrite_op_meta (STACK_TOP (varg_headers), om);
       STACK_DROP (varg_headers, 1);
@@ -1135,7 +1079,13 @@ rewrite_varg_header_set_args_count (uint8_t args_count)
     }
     case VM_OP_FUNC_DECL_N:
     {
-      om.op.data.func_decl_n.arg_list = args_count;
+      if (args_count > 255)
+      {
+        PARSE_ERROR (JSP_EARLY_ERROR_SYNTAX,
+                     "No more than 255 formal parameters are currently supported",
+                     LIT_ITERATOR_POS_ZERO);
+      }
+      om.op.data.func_decl_n.arg_list = (idx_t) args_count;
       serializer_rewrite_op_meta (STACK_TOP (varg_headers), om);
       STACK_DROP (varg_headers, 1);
       return empty_operand ();
@@ -1143,8 +1093,15 @@ rewrite_varg_header_set_args_count (uint8_t args_count)
     case VM_OP_ARRAY_DECL:
     case VM_OP_OBJ_DECL:
     {
+      if (args_count > 65535)
+      {
+        PARSE_ERROR (JSP_EARLY_ERROR_SYNTAX,
+                     "No more than 65535 formal parameters are currently supported",
+                     LIT_ITERATOR_POS_ZERO);
+      }
       const operand res = tmp_operand ();
-      om.op.data.obj_decl.list = args_count;
+      om.op.data.obj_decl.list_1 = (idx_t) (args_count >> 8);
+      om.op.data.obj_decl.list_2 = (idx_t) (args_count & 0xffu);
       om.op.data.obj_decl.lhs = res.data.uid;
       serializer_rewrite_op_meta (STACK_TOP (varg_headers), om);
       STACK_DROP (varg_headers, 1);
