@@ -1,0 +1,837 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F936661C1B72085900608CC1 /* API.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F936661A1B72085900608CC1 /* API.cpp */; };
+		F93666201B720DAC00608CC1 /* API.mm in Sources */ = {isa = PBXBuildFile; fileRef = F936661E1B720DAC00608CC1 /* API.mm */; };
+		F96B88091B684783003459D0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F96B88081B684783003459D0 /* main.m */; };
+		F96B880C1B684783003459D0 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F96B880B1B684783003459D0 /* AppDelegate.m */; };
+		F96B880F1B684783003459D0 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F96B880E1B684783003459D0 /* ViewController.m */; };
+		F96B88121B684783003459D0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F96B88101B684783003459D0 /* Main.storyboard */; };
+		F96B88141B684783003459D0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F96B88131B684783003459D0 /* Images.xcassets */; };
+		F96B88171B684783003459D0 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = F96B88151B684783003459D0 /* LaunchScreen.xib */; };
+		F96B88231B684783003459D0 /* JerryWatchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F96B88221B684783003459D0 /* JerryWatchTests.m */; };
+		F96B88371B684797003459D0 /* InterfaceController.mm in Sources */ = {isa = PBXBuildFile; fileRef = F96B88361B684797003459D0 /* InterfaceController.mm */; };
+		F96B883A1B684797003459D0 /* NotificationController.m in Sources */ = {isa = PBXBuildFile; fileRef = F96B88391B684797003459D0 /* NotificationController.m */; };
+		F96B883C1B684797003459D0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F96B883B1B684797003459D0 /* Images.xcassets */; };
+		F96B88401B684797003459D0 /* JerryWatch WatchKit App.app in Resources */ = {isa = PBXBuildFile; fileRef = F96B883F1B684797003459D0 /* JerryWatch WatchKit App.app */; };
+		F96B88481B684797003459D0 /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F96B88461B684797003459D0 /* Interface.storyboard */; };
+		F96B884A1B684797003459D0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F96B88491B684797003459D0 /* Images.xcassets */; };
+		F96B884D1B684798003459D0 /* JerryWatch WatchKit Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F96B88301B684797003459D0 /* JerryWatch WatchKit Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		F9E790831B71F5F6008531D2 /* Module.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F9E790811B71F5F6008531D2 /* Module.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F96B881D1B684783003459D0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F96B87FB1B684783003459D0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F96B88021B684783003459D0;
+			remoteInfo = JerryWatch;
+		};
+		F96B88411B684797003459D0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F96B87FB1B684783003459D0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F96B883E1B684797003459D0;
+			remoteInfo = "JerryWatch WatchKit App";
+		};
+		F96B884B1B684798003459D0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F96B87FB1B684783003459D0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F96B882F1B684797003459D0;
+			remoteInfo = "JerryWatch WatchKit Extension";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		F96B88541B684798003459D0 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				F96B884D1B684798003459D0 /* JerryWatch WatchKit Extension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		F936661A1B72085900608CC1 /* API.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = API.cpp; sourceTree = "<group>"; };
+		F936661B1B72085900608CC1 /* API.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = API.hpp; sourceTree = "<group>"; };
+		F936661E1B720DAC00608CC1 /* API.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = API.mm; path = TitaniumWatchKit/API.mm; sourceTree = "<group>"; };
+		F936661F1B720DAC00608CC1 /* API.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = API.h; path = TitaniumWatchKit/API.h; sourceTree = "<group>"; };
+		F96B88031B684783003459D0 /* JerryWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JerryWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F96B88071B684783003459D0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F96B88081B684783003459D0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		F96B880A1B684783003459D0 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		F96B880B1B684783003459D0 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		F96B880D1B684783003459D0 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		F96B880E1B684783003459D0 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		F96B88111B684783003459D0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		F96B88131B684783003459D0 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		F96B88161B684783003459D0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		F96B881C1B684783003459D0 /* JerryWatchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JerryWatchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F96B88211B684783003459D0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F96B88221B684783003459D0 /* JerryWatchTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JerryWatchTests.m; sourceTree = "<group>"; };
+		F96B88301B684797003459D0 /* JerryWatch WatchKit Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "JerryWatch WatchKit Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F96B88331B684797003459D0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F96B88341B684797003459D0 /* PushNotificationPayload.apns */ = {isa = PBXFileReference; lastKnownFileType = text; path = PushNotificationPayload.apns; sourceTree = "<group>"; };
+		F96B88351B684797003459D0 /* InterfaceController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InterfaceController.h; sourceTree = "<group>"; };
+		F96B88361B684797003459D0 /* InterfaceController.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp.preprocessed; path = InterfaceController.mm; sourceTree = "<group>"; };
+		F96B88381B684797003459D0 /* NotificationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotificationController.h; sourceTree = "<group>"; };
+		F96B88391B684797003459D0 /* NotificationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NotificationController.m; sourceTree = "<group>"; };
+		F96B883B1B684797003459D0 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		F96B883F1B684797003459D0 /* JerryWatch WatchKit App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "JerryWatch WatchKit App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F96B88451B684797003459D0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F96B88471B684797003459D0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
+		F96B88491B684797003459D0 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		F9E192F01B6EF47B0097BDB9 /* daisy.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = daisy.hpp; path = includes/Daisy/daisy.hpp; sourceTree = SOURCE_ROOT; };
+		F9E192F21B6EF47B0097BDB9 /* JSBase.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = JSBase.hpp; sourceTree = "<group>"; };
+		F9E192F31B6EF47B0097BDB9 /* JSUtil.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = JSUtil.hpp; sourceTree = "<group>"; };
+		F9E192F41B6EF47B0097BDB9 /* JSBoolean.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = JSBoolean.hpp; path = includes/Daisy/JSBoolean.hpp; sourceTree = SOURCE_ROOT; };
+		F9E192F51B6EF47B0097BDB9 /* JSClass.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = JSClass.hpp; path = includes/Daisy/JSClass.hpp; sourceTree = SOURCE_ROOT; };
+		F9E192F61B6EF47B0097BDB9 /* JSContext.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = JSContext.hpp; path = includes/Daisy/JSContext.hpp; sourceTree = SOURCE_ROOT; };
+		F9E192F71B6EF47B0097BDB9 /* JSContextGroup.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = JSContextGroup.hpp; path = includes/Daisy/JSContextGroup.hpp; sourceTree = SOURCE_ROOT; };
+		F9E192F81B6EF47B0097BDB9 /* JSExport.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = JSExport.hpp; path = includes/Daisy/JSExport.hpp; sourceTree = SOURCE_ROOT; };
+		F9E192F91B6EF47B0097BDB9 /* JSExportClass.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = JSExportClass.hpp; path = includes/Daisy/JSExportClass.hpp; sourceTree = SOURCE_ROOT; };
+		F9E192FA1B6EF47B0097BDB9 /* JSNumber.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = JSNumber.hpp; path = includes/Daisy/JSNumber.hpp; sourceTree = SOURCE_ROOT; };
+		F9E192FB1B6EF47B0097BDB9 /* JSObject.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = JSObject.hpp; path = includes/Daisy/JSObject.hpp; sourceTree = SOURCE_ROOT; };
+		F9E192FC1B6EF47B0097BDB9 /* JSString.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = JSString.hpp; path = includes/Daisy/JSString.hpp; sourceTree = SOURCE_ROOT; };
+		F9E192FD1B6EF47B0097BDB9 /* JSValue.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = JSValue.hpp; path = includes/Daisy/JSValue.hpp; sourceTree = SOURCE_ROOT; };
+		F9E790811B71F5F6008531D2 /* Module.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Module.cpp; sourceTree = "<group>"; };
+		F9E790821B71F5F6008531D2 /* Module.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Module.hpp; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F96B88001B684783003459D0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F96B88191B684783003459D0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F96B882D1B684797003459D0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F936661D1B720D4B00608CC1 /* TitaniumWatchKit */ = {
+			isa = PBXGroup;
+			children = (
+				F936661E1B720DAC00608CC1 /* API.mm */,
+				F936661F1B720DAC00608CC1 /* API.h */,
+			);
+			name = TitaniumWatchKit;
+			sourceTree = "<group>";
+		};
+		F96B87FA1B684783003459D0 = {
+			isa = PBXGroup;
+			children = (
+				F96B88051B684783003459D0 /* JerryWatch */,
+				F96B881F1B684783003459D0 /* JerryWatchTests */,
+				F96B88311B684797003459D0 /* JerryWatch WatchKit Extension */,
+				F96B88431B684797003459D0 /* JerryWatch WatchKit App */,
+				F96B88041B684783003459D0 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F96B88041B684783003459D0 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F96B88031B684783003459D0 /* JerryWatch.app */,
+				F96B881C1B684783003459D0 /* JerryWatchTests.xctest */,
+				F96B88301B684797003459D0 /* JerryWatch WatchKit Extension.appex */,
+				F96B883F1B684797003459D0 /* JerryWatch WatchKit App.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F96B88051B684783003459D0 /* JerryWatch */ = {
+			isa = PBXGroup;
+			children = (
+				F96B880A1B684783003459D0 /* AppDelegate.h */,
+				F96B880B1B684783003459D0 /* AppDelegate.m */,
+				F96B880D1B684783003459D0 /* ViewController.h */,
+				F96B880E1B684783003459D0 /* ViewController.m */,
+				F96B88101B684783003459D0 /* Main.storyboard */,
+				F96B88131B684783003459D0 /* Images.xcassets */,
+				F96B88151B684783003459D0 /* LaunchScreen.xib */,
+				F96B88061B684783003459D0 /* Supporting Files */,
+			);
+			path = JerryWatch;
+			sourceTree = "<group>";
+		};
+		F96B88061B684783003459D0 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				F96B88071B684783003459D0 /* Info.plist */,
+				F96B88081B684783003459D0 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		F96B881F1B684783003459D0 /* JerryWatchTests */ = {
+			isa = PBXGroup;
+			children = (
+				F96B88221B684783003459D0 /* JerryWatchTests.m */,
+				F96B88201B684783003459D0 /* Supporting Files */,
+			);
+			path = JerryWatchTests;
+			sourceTree = "<group>";
+		};
+		F96B88201B684783003459D0 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				F96B88211B684783003459D0 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		F96B88311B684797003459D0 /* JerryWatch WatchKit Extension */ = {
+			isa = PBXGroup;
+			children = (
+				F936661D1B720D4B00608CC1 /* TitaniumWatchKit */,
+				F9E790801B71F5F6008531D2 /* TitaniumKit */,
+				F9E192EF1B6EF46B0097BDB9 /* HAL */,
+				F96B88351B684797003459D0 /* InterfaceController.h */,
+				F96B88361B684797003459D0 /* InterfaceController.mm */,
+				F96B88381B684797003459D0 /* NotificationController.h */,
+				F96B88391B684797003459D0 /* NotificationController.m */,
+				F96B883B1B684797003459D0 /* Images.xcassets */,
+				F96B88321B684797003459D0 /* Supporting Files */,
+			);
+			path = "JerryWatch WatchKit Extension";
+			sourceTree = "<group>";
+		};
+		F96B88321B684797003459D0 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				F96B88331B684797003459D0 /* Info.plist */,
+				F96B88341B684797003459D0 /* PushNotificationPayload.apns */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		F96B88431B684797003459D0 /* JerryWatch WatchKit App */ = {
+			isa = PBXGroup;
+			children = (
+				F96B88461B684797003459D0 /* Interface.storyboard */,
+				F96B88491B684797003459D0 /* Images.xcassets */,
+				F96B88441B684797003459D0 /* Supporting Files */,
+			);
+			path = "JerryWatch WatchKit App";
+			sourceTree = "<group>";
+		};
+		F96B88441B684797003459D0 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				F96B88451B684797003459D0 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		F9E192EF1B6EF46B0097BDB9 /* HAL */ = {
+			isa = PBXGroup;
+			children = (
+				F9E192F01B6EF47B0097BDB9 /* daisy.hpp */,
+				F9E192F11B6EF47B0097BDB9 /* detail */,
+				F9E192F41B6EF47B0097BDB9 /* JSBoolean.hpp */,
+				F9E192F51B6EF47B0097BDB9 /* JSClass.hpp */,
+				F9E192F61B6EF47B0097BDB9 /* JSContext.hpp */,
+				F9E192F71B6EF47B0097BDB9 /* JSContextGroup.hpp */,
+				F9E192F81B6EF47B0097BDB9 /* JSExport.hpp */,
+				F9E192F91B6EF47B0097BDB9 /* JSExportClass.hpp */,
+				F9E192FA1B6EF47B0097BDB9 /* JSNumber.hpp */,
+				F9E192FB1B6EF47B0097BDB9 /* JSObject.hpp */,
+				F9E192FC1B6EF47B0097BDB9 /* JSString.hpp */,
+				F9E192FD1B6EF47B0097BDB9 /* JSValue.hpp */,
+			);
+			name = HAL;
+			sourceTree = "<group>";
+		};
+		F9E192F11B6EF47B0097BDB9 /* detail */ = {
+			isa = PBXGroup;
+			children = (
+				F9E192F21B6EF47B0097BDB9 /* JSBase.hpp */,
+				F9E192F31B6EF47B0097BDB9 /* JSUtil.hpp */,
+			);
+			name = detail;
+			path = includes/Daisy/detail;
+			sourceTree = SOURCE_ROOT;
+		};
+		F9E790801B71F5F6008531D2 /* TitaniumKit */ = {
+			isa = PBXGroup;
+			children = (
+				F936661A1B72085900608CC1 /* API.cpp */,
+				F936661B1B72085900608CC1 /* API.hpp */,
+				F9E790811B71F5F6008531D2 /* Module.cpp */,
+				F9E790821B71F5F6008531D2 /* Module.hpp */,
+			);
+			name = TitaniumKit;
+			path = Titanium;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F96B88021B684783003459D0 /* JerryWatch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F96B88261B684783003459D0 /* Build configuration list for PBXNativeTarget "JerryWatch" */;
+			buildPhases = (
+				F96B87FF1B684783003459D0 /* Sources */,
+				F96B88001B684783003459D0 /* Frameworks */,
+				F96B88011B684783003459D0 /* Resources */,
+				F96B88541B684798003459D0 /* Embed App Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F96B884C1B684798003459D0 /* PBXTargetDependency */,
+			);
+			name = JerryWatch;
+			productName = JerryWatch;
+			productReference = F96B88031B684783003459D0 /* JerryWatch.app */;
+			productType = "com.apple.product-type.application";
+		};
+		F96B881B1B684783003459D0 /* JerryWatchTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F96B88291B684783003459D0 /* Build configuration list for PBXNativeTarget "JerryWatchTests" */;
+			buildPhases = (
+				F96B88181B684783003459D0 /* Sources */,
+				F96B88191B684783003459D0 /* Frameworks */,
+				F96B881A1B684783003459D0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F96B881E1B684783003459D0 /* PBXTargetDependency */,
+			);
+			name = JerryWatchTests;
+			productName = JerryWatchTests;
+			productReference = F96B881C1B684783003459D0 /* JerryWatchTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		F96B882F1B684797003459D0 /* JerryWatch WatchKit Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F96B88511B684798003459D0 /* Build configuration list for PBXNativeTarget "JerryWatch WatchKit Extension" */;
+			buildPhases = (
+				F96B882C1B684797003459D0 /* Sources */,
+				F96B882D1B684797003459D0 /* Frameworks */,
+				F96B882E1B684797003459D0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F96B88421B684797003459D0 /* PBXTargetDependency */,
+			);
+			name = "JerryWatch WatchKit Extension";
+			productName = "JerryWatch WatchKit Extension";
+			productReference = F96B88301B684797003459D0 /* JerryWatch WatchKit Extension.appex */;
+			productType = "com.apple.product-type.watchkit-extension";
+		};
+		F96B883E1B684797003459D0 /* JerryWatch WatchKit App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F96B884E1B684798003459D0 /* Build configuration list for PBXNativeTarget "JerryWatch WatchKit App" */;
+			buildPhases = (
+				F96B883D1B684797003459D0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "JerryWatch WatchKit App";
+			productName = "JerryWatch WatchKit App";
+			productReference = F96B883F1B684797003459D0 /* JerryWatch WatchKit App.app */;
+			productType = "com.apple.product-type.application.watchapp";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F96B87FB1B684783003459D0 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0640;
+				ORGANIZATIONNAME = "";
+				TargetAttributes = {
+					F96B88021B684783003459D0 = {
+						CreatedOnToolsVersion = 6.4;
+					};
+					F96B881B1B684783003459D0 = {
+						CreatedOnToolsVersion = 6.4;
+						TestTargetID = F96B88021B684783003459D0;
+					};
+					F96B882F1B684797003459D0 = {
+						CreatedOnToolsVersion = 6.4;
+					};
+					F96B883E1B684797003459D0 = {
+						CreatedOnToolsVersion = 6.4;
+					};
+				};
+			};
+			buildConfigurationList = F96B87FE1B684783003459D0 /* Build configuration list for PBXProject "JerryWatch" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = F96B87FA1B684783003459D0;
+			productRefGroup = F96B88041B684783003459D0 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F96B88021B684783003459D0 /* JerryWatch */,
+				F96B881B1B684783003459D0 /* JerryWatchTests */,
+				F96B882F1B684797003459D0 /* JerryWatch WatchKit Extension */,
+				F96B883E1B684797003459D0 /* JerryWatch WatchKit App */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F96B88011B684783003459D0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F96B88121B684783003459D0 /* Main.storyboard in Resources */,
+				F96B88171B684783003459D0 /* LaunchScreen.xib in Resources */,
+				F96B88141B684783003459D0 /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F96B881A1B684783003459D0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F96B882E1B684797003459D0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F96B883C1B684797003459D0 /* Images.xcassets in Resources */,
+				F96B88401B684797003459D0 /* JerryWatch WatchKit App.app in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F96B883D1B684797003459D0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F96B88481B684797003459D0 /* Interface.storyboard in Resources */,
+				F96B884A1B684797003459D0 /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F96B87FF1B684783003459D0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F96B880F1B684783003459D0 /* ViewController.m in Sources */,
+				F96B880C1B684783003459D0 /* AppDelegate.m in Sources */,
+				F96B88091B684783003459D0 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F96B88181B684783003459D0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F96B88231B684783003459D0 /* JerryWatchTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F96B882C1B684797003459D0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F96B883A1B684797003459D0 /* NotificationController.m in Sources */,
+				F9E790831B71F5F6008531D2 /* Module.cpp in Sources */,
+				F93666201B720DAC00608CC1 /* API.mm in Sources */,
+				F936661C1B72085900608CC1 /* API.cpp in Sources */,
+				F96B88371B684797003459D0 /* InterfaceController.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F96B881E1B684783003459D0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F96B88021B684783003459D0 /* JerryWatch */;
+			targetProxy = F96B881D1B684783003459D0 /* PBXContainerItemProxy */;
+		};
+		F96B88421B684797003459D0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F96B883E1B684797003459D0 /* JerryWatch WatchKit App */;
+			targetProxy = F96B88411B684797003459D0 /* PBXContainerItemProxy */;
+		};
+		F96B884C1B684798003459D0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F96B882F1B684797003459D0 /* JerryWatch WatchKit Extension */;
+			targetProxy = F96B884B1B684798003459D0 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		F96B88101B684783003459D0 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F96B88111B684783003459D0 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		F96B88151B684783003459D0 /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F96B88161B684783003459D0 /* Base */,
+			);
+			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+		F96B88461B684797003459D0 /* Interface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F96B88471B684797003459D0 /* Base */,
+			);
+			name = Interface.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		F96B88241B684783003459D0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F96B88251B684783003459D0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		F96B88271B684783003459D0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/includes",
+				);
+				INFOPLIST_FILE = JerryWatch/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/JerryWatch",
+					WatchKit,
+					Extension,
+					"$(SRCROOT)",
+				);
+				OTHER_LDFLAGS = "-lDaisy";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		F96B88281B684783003459D0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/includes",
+				);
+				INFOPLIST_FILE = JerryWatch/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/JerryWatch",
+					WatchKit,
+					Extension,
+					"$(SRCROOT)",
+				);
+				OTHER_LDFLAGS = "-lDaisy";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		F96B882A1B684783003459D0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = JerryWatchTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/JerryWatch.app/JerryWatch";
+			};
+			name = Debug;
+		};
+		F96B882B1B684783003459D0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = JerryWatchTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/JerryWatch.app/JerryWatch";
+			};
+			name = Release;
+		};
+		F96B884F1B684798003459D0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/includes",
+				);
+				IBSC_MODULE = JerryWatch_WatchKit_Extension;
+				INFOPLIST_FILE = "JerryWatch WatchKit App/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				"TARGETED_DEVICE_FAMILY[sdk=iphonesimulator*]" = "1,4";
+			};
+			name = Debug;
+		};
+		F96B88501B684798003459D0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/includes",
+				);
+				IBSC_MODULE = JerryWatch_WatchKit_Extension;
+				INFOPLIST_FILE = "JerryWatch WatchKit App/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				"TARGETED_DEVICE_FAMILY[sdk=iphonesimulator*]" = "1,4";
+			};
+			name = Release;
+		};
+		F96B88521B684798003459D0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/JerryWatch\\ WatchKit\\ Extension",
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/includes",
+				);
+				INFOPLIST_FILE = "JerryWatch WatchKit Extension/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/JerryWatch",
+					WatchKit,
+					Extension,
+					"$(SRCROOT)",
+				);
+				OTHER_LDFLAGS = "-lDaisy";
+				PRODUCT_NAME = "${TARGET_NAME}";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		F96B88531B684798003459D0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/JerryWatch\\ WatchKit\\ Extension",
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/includes",
+				);
+				INFOPLIST_FILE = "JerryWatch WatchKit Extension/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/JerryWatch",
+					WatchKit,
+					Extension,
+					"$(SRCROOT)",
+				);
+				OTHER_LDFLAGS = "-lDaisy";
+				PRODUCT_NAME = "${TARGET_NAME}";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F96B87FE1B684783003459D0 /* Build configuration list for PBXProject "JerryWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F96B88241B684783003459D0 /* Debug */,
+				F96B88251B684783003459D0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F96B88261B684783003459D0 /* Build configuration list for PBXNativeTarget "JerryWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F96B88271B684783003459D0 /* Debug */,
+				F96B88281B684783003459D0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F96B88291B684783003459D0 /* Build configuration list for PBXNativeTarget "JerryWatchTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F96B882A1B684783003459D0 /* Debug */,
+				F96B882B1B684783003459D0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F96B884E1B684798003459D0 /* Build configuration list for PBXNativeTarget "JerryWatch WatchKit App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F96B884F1B684798003459D0 /* Debug */,
+				F96B88501B684798003459D0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F96B88511B684798003459D0 /* Build configuration list for PBXNativeTarget "JerryWatch WatchKit Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F96B88521B684798003459D0 /* Debug */,
+				F96B88531B684798003459D0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F96B87FB1B684783003459D0 /* Project object */;
+}
