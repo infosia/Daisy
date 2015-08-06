@@ -40,7 +40,7 @@ namespace Daisy {
 #endif  // DAISY_THREAD_SAFE
 
 		void EnsureJerryInit();
-		static std::size_t retainCount;
+		static std::size_t retainCount__;
 	};
 
   inline

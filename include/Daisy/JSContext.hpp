@@ -42,9 +42,9 @@ namespace Daisy {
 		JSValue JSEvaluateScript(const std::string& script) const;
 
 	private:
-    friend class JSContextGroup;
+    	friend class JSContextGroup;
     
-		JSContext(const JSContextGroup& js_context_group) DAISY_NOEXCEPT;
+		JSContext() DAISY_NOEXCEPT;
 
 		// Prevent heap based objects.
 		void* operator new(std::size_t)     = delete; // #1: To prevent allocation of scalar objects
@@ -64,7 +64,6 @@ namespace Daisy {
     // need to be exported from a DLL.
 #pragma warning(push)
 #pragma warning(disable: 4251)
-    JSContextGroup     js_context_group__;
 #pragma warning(pop)
 
 	};

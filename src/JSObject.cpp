@@ -13,8 +13,10 @@ namespace Daisy {
 
 	std::unordered_map<const jerry_api_object_t*, JSObjectCallAsConstructorCallback> JSObject::js_object_external_constructors_map__;
 	std::unordered_map<const jerry_api_object_t*, JSObjectCallAsFunctionCallback> JSObject::js_object_external_functions_map__;
+	std::unordered_map<const jerry_api_object_t*, std::unordered_map<std::string, JSValue>> JSObject::js_object_properties_map__;
 	std::unordered_map<std::uintptr_t, JSObjectFinalizeCallback> JSObject::js_object_finalizeCallback_map__;
 	std::unordered_map<std::uintptr_t, const jerry_api_object_t*> JSObject::js_private_data_to_js_object_ref_map__;
+	jerry_api_object_t* JSObject::js_api_global_object__;
 
 	static bool js_api_object_constructor_function(
 				const jerry_api_object_t *function_object_ptr,
@@ -62,10 +64,14 @@ namespace Daisy {
 		return js_api_value;
 	}
 
-	static void js_object_finalize_callback(std::uintptr_t native_ptr) {
+	void JSObject::FinalizePrivateData(std::uintptr_t native_ptr) {
 		const auto position = JSObject::js_object_finalizeCallback_map__.find(native_ptr);
 		const bool found    = position != JSObject::js_object_finalizeCallback_map__.end();
-		assert(found);
+
+		if (!found) {
+			return;
+		}
+
 		position->second(native_ptr);
 		JSObject::js_object_finalizeCallback_map__.erase(native_ptr);
 		JSObject::js_private_data_to_js_object_ref_map__.erase(native_ptr);
@@ -84,7 +90,7 @@ namespace Daisy {
 		assert(!found);
 		js_object_finalizeCallback_map__.emplace(native_ptr, finalize_callback);
 
-		jerry_api_set_object_native_handle(js_api_value__.v_object, native_ptr, js_object_finalize_callback);
+		jerry_api_set_object_native_handle(js_api_value__.v_object, native_ptr, NULL);
 
 		assert(js_private_data_to_js_object_ref_map__.find(native_ptr) == js_private_data_to_js_object_ref_map__.end());
 		js_private_data_to_js_object_ref_map__.emplace(native_ptr, js_api_value__.v_object);
@@ -121,10 +127,20 @@ namespace Daisy {
 	void JSObject::SetProperty(const std::string& name, JSValue js_value) {
 		auto value = static_cast<jerry_api_value_t>(js_value);
 		jerry_api_set_object_field_value(js_api_value__.v_object, reinterpret_cast<const jerry_api_char_t *>(name.c_str()), &value);
-		if (js_object_properties_map__.find(name) != js_object_properties_map__.end()) {
-			js_object_properties_map__.erase(name);
+
+		auto key = js_api_value__.v_object;
+		auto js_object_properties_pos = js_object_properties_map__.find(key);
+		std::unordered_map<std::string, JSValue> js_object_properties;
+		if (js_object_properties_pos != js_object_properties_map__.end()) {
+			js_object_properties = js_object_properties_pos->second;
 		}
-		js_object_properties_map__.emplace(name, js_value); // to prevent from GC
+		if (js_object_properties.find(name) != js_object_properties.end()) {
+			js_object_properties.erase(name);
+		}
+		assert(js_object_properties.find(name) == js_object_properties.end());
+
+		js_object_properties.emplace(name, js_value); // to prevent from GC
+		js_object_properties_map__[key] = js_object_properties;
 	}
 
 	JSObject::JSObject(const JSContext& js_context) DAISY_NOEXCEPT 

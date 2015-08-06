@@ -13,14 +13,15 @@
 
 namespace Daisy {
 
-	std::size_t JSContextGroup::retainCount { 0 };
+	std::size_t JSContextGroup::retainCount__ { 0 };
 
 	void JSContextGroup::EnsureJerryInit() {
 		DAISY_JSCONTEXTGROUP_LOCK_GUARD;
-		if (retainCount == 0) {
+		if (retainCount__ == 0) {
 			jerry_init(JERRY_FLAG_EMPTY);
+			JSObject::js_api_global_object__ = jerry_api_get_global();
 		}
-		++retainCount;
+		++retainCount__;
 	}
 	
 	JSContextGroup::JSContextGroup() DAISY_NOEXCEPT {
@@ -28,16 +29,27 @@ namespace Daisy {
 	}
 	
 	JSContext JSContextGroup::CreateContext() const DAISY_NOEXCEPT {
-		return JSContext(*this);
+		return JSContext();
 	}
 
 	JSContextGroup::~JSContextGroup() DAISY_NOEXCEPT {
-		--retainCount;
-		if (retainCount == 0) {
+		assert(retainCount__ > 0);
+		assert(JSObject::js_api_global_object__ != nullptr);
+		--retainCount__;
+		if (retainCount__ == 0) {
 			// make sure we have properly cleaned up resources
+
+			// Clean up global object
+			JSObject::js_object_external_functions_map__.erase(JSObject::js_api_global_object__);
+			JSObject::js_object_external_constructors_map__.erase(JSObject::js_api_global_object__);
+			JSObject::js_object_properties_map__.erase(JSObject::js_api_global_object__);
+			jerry_api_release_object(JSObject::js_api_global_object__);
+			JSObject::js_api_global_object__ = nullptr;
+
 			assert(JSObject::js_private_data_to_js_object_ref_map__.empty());
 			assert(JSObject::js_object_external_functions_map__.empty());
 			assert(JSObject::js_object_external_constructors_map__.empty());
+			assert(JSObject::js_object_properties_map__.empty());
 			assert(JSObject::js_object_finalizeCallback_map__.empty());
 			assert(JSValue::js_api_value_retain_count_map__.empty());
 			jerry_cleanup();

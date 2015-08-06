@@ -71,6 +71,8 @@ namespace Daisy {
 			return js_api_value__.type == JERRY_API_DATA_TYPE_OBJECT;
 		}
 
+		virtual bool IsGlobalObject() const DAISY_NOEXCEPT final;
+
 		virtual void unmanaged() {
 			js_value_managed__ = false;
 		}
@@ -110,7 +112,6 @@ namespace Daisy {
 #pragma warning(disable: 4251)
 		bool js_value_managed__ { true };
 		jerry_api_value_t js_api_value__;
-		std::map<std::string, JSValue> js_object_properties_map__;
 		static std::unordered_map<std::intptr_t, std::tuple<jerry_api_data_type_t, std::size_t>> js_api_value_retain_count_map__;
 #pragma warning(pop)
 

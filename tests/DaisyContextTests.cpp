@@ -218,3 +218,24 @@ TEST(DaisyContextTests, GetProperty_Object) {
   XCTAssertTrue(js_property.IsObject());
   global_object.SetProperty("testObject", js_context.CreateUndefined());
 }
+
+TEST(DaisyContextTests, GetProperty_String_retain) {
+  JSContextGroup js_context_group;
+  auto js_context = js_context_group.CreateContext();
+
+  {
+    auto global_object = js_context.get_global_object();
+    auto js_object = js_context.CreateObject();
+    global_object.SetProperty("GetProperty_String_retain", js_object);
+    XCTAssertFalse(js_object.HasProperty("testString"));
+    js_object.SetProperty("testString", js_context.CreateString("GetProperty_String"));
+  }
+
+  auto global_object = js_context.get_global_object();
+  auto js_object_property = global_object.GetProperty("GetProperty_String_retain");
+  XCTAssertTrue(js_object_property.IsObject());
+  auto js_object = static_cast<JSObject>(js_object_property);
+  auto js_property = js_object.GetProperty("testString");
+  XCTAssertEqual("GetProperty_String", static_cast<std::string>(js_property));
+  global_object.SetProperty("GetProperty_String_retain", js_context.CreateUndefined());
+}

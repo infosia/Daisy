@@ -19,24 +19,21 @@ namespace Daisy {
 
 	}
 	
-	JSContext::JSContext(const JSContext& rhs) DAISY_NOEXCEPT 
-		: js_context_group__(rhs.js_context_group__) {
+	JSContext::JSContext(const JSContext& rhs) DAISY_NOEXCEPT {
 
 	}
 	
-	JSContext::JSContext(JSContext&& rhs) DAISY_NOEXCEPT
-		: js_context_group__(rhs.js_context_group__) {
+	JSContext::JSContext(JSContext&& rhs) DAISY_NOEXCEPT {
 
 	}
 
-	JSContext::JSContext(const JSContextGroup& js_context_group) DAISY_NOEXCEPT 
-		: js_context_group__(js_context_group) {
+	JSContext::JSContext() DAISY_NOEXCEPT {
 
 	}
 
 	JSObject JSContext::get_global_object() const DAISY_NOEXCEPT {
 		DAISY_JSCONTEXT_LOCK_GUARD;
-		return JSObject(*this, jerry_api_get_global());		
+		return JSObject(*this, JSObject::js_api_global_object__, false);
 	}
 
 	JSValue JSContext::CreateUndefined() const DAISY_NOEXCEPT {
@@ -113,7 +110,6 @@ namespace Daisy {
 	
 	void JSContext::swap(JSContext& other) DAISY_NOEXCEPT {
 		DAISY_JSCONTEXT_LOCK_GUARD;
-		std::swap(js_context_group__, other.js_context_group__);
 	}
 	
 }

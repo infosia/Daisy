@@ -52,6 +52,7 @@ namespace Daisy {
 		JSObject(const JSContext& js_context, const jerry_api_value_t& js_api_value) DAISY_NOEXCEPT;
 		JSObject(const JSContext& js_context, const jerry_api_object_t* js_api_object, const bool& managed = true) DAISY_NOEXCEPT;
 
+		static void FinalizePrivateData(std::uintptr_t native_ptr);
 		static JSObject FindJSObjectFromPrivateData(const JSContext& js_context, const std::uintptr_t& native_ptr);
 
 		// Silence 4251 on Windows since private member variables do not
@@ -62,6 +63,8 @@ namespace Daisy {
 		static std::unordered_map<const jerry_api_object_t*, JSObjectCallAsFunctionCallback> js_object_external_functions_map__;
 		static std::unordered_map<const jerry_api_object_t*, JSObjectCallAsConstructorCallback> js_object_external_constructors_map__;
 		static std::unordered_map<std::uintptr_t, const jerry_api_object_t*> js_private_data_to_js_object_ref_map__;
+		static std::unordered_map<const jerry_api_object_t*, std::unordered_map<std::string, JSValue>> js_object_properties_map__;
+		static jerry_api_object_t* js_api_global_object__;
 #pragma warning(pop)
 
 	protected:

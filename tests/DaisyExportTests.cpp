@@ -259,3 +259,39 @@ TEST(DaisyExportTests, PrototypeChain) {
 	XCTAssertEqual("Widget test OK", static_cast<std::string>(test_result));
 }
 
+TEST(DaisyExportTests, JSExport_retain) {
+	JSContextGroup js_context_group;
+	auto js_context = js_context_group.CreateContext();
+
+	{
+		auto global_object = js_context.get_global_object();
+		auto js_object = js_context.CreateObject();
+		global_object.SetProperty("placeholder", js_object);	
+		auto widget_ctor = js_context.CreateObject(JSExport<Widget>::Class());
+		js_object.SetProperty("Widget", widget_ctor);
+		XCTAssertTrue(global_object.HasProperty("placeholder"));
+		XCTAssertTrue(js_object.HasProperty("Widget"));
+	}
+
+	auto global_object = js_context.get_global_object();
+	XCTAssertTrue(global_object.HasProperty("placeholder"));
+	auto js_object_property = global_object.GetProperty("placeholder");
+	XCTAssertTrue(js_object_property.IsObject());
+	auto js_object = static_cast<JSObject>(js_object_property);
+	XCTAssertTrue(js_object.HasProperty("Widget"));
+	auto widget_property = js_object.GetProperty("Widget");
+	XCTAssertTrue(widget_property.IsObject());
+	auto widget = static_cast<JSObject>(widget_property);
+	XCTAssertTrue(widget.HasProperty("testString"));
+
+	auto test_func_property = widget.GetProperty("testString");
+	XCTAssertTrue(!test_func_property.IsUndefined());
+	XCTAssertTrue(test_func_property.IsObject());
+	auto test_func = static_cast<JSObject>(test_func_property);
+	XCTAssertTrue(test_func.IsFunction());
+	auto test_result = test_func(widget);
+	XCTAssertTrue(test_result.IsString());
+	XCTAssertEqual("Widget test OK", static_cast<std::string>(test_result));
+
+}
+

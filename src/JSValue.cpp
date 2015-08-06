@@ -19,7 +19,6 @@ namespace Daisy {
 	JSValue::JSValue(const JSValue& rhs) DAISY_NOEXCEPT
 		: js_context__(rhs.js_context__)
 		, js_api_value__(rhs.js_api_value__)
-		, js_object_properties_map__(rhs.js_object_properties_map__)
 		, js_value_managed__(rhs.js_value_managed__) {
 		retain();
 	}
@@ -27,7 +26,6 @@ namespace Daisy {
 	JSValue::JSValue(JSValue&& rhs) DAISY_NOEXCEPT
 		: js_context__(rhs.js_context__)
 		, js_api_value__(rhs.js_api_value__)
-		, js_object_properties_map__(rhs.js_object_properties_map__)
 		, js_value_managed__(rhs.js_value_managed__) {
 		retain();
 	}
@@ -37,6 +35,11 @@ namespace Daisy {
 		, js_api_value__(js_api_value)
 		, js_value_managed__(managed) {
 		retain();
+	}
+
+
+	bool JSValue::IsGlobalObject() const DAISY_NOEXCEPT {
+		return (js_api_value__.v_object == JSObject::js_api_global_object__);
 	}
 
 	JSValue::operator bool() const DAISY_NOEXCEPT {
@@ -90,7 +93,9 @@ namespace Daisy {
 	}
 
 	JSValue::operator JSObject() const DAISY_NOEXCEPT {
-		return JSObject(js_context__, js_api_value__);
+		auto js_object = JSObject(js_context__, js_api_value__);
+		js_object.js_value_managed__ = js_value_managed__;
+		return js_object;
 	}
 
 	JSValue& JSValue::operator=(JSValue rhs) DAISY_NOEXCEPT {
@@ -103,7 +108,6 @@ namespace Daisy {
 		DAISY_JSVALUE_LOCK_GUARD;
 		std::swap(js_context__, other.js_context__);
 		std::swap(js_api_value__, other.js_api_value__);
-		std::swap(js_object_properties_map__, other.js_object_properties_map__);
 		std::swap(js_value_managed__, other.js_value_managed__);
 	}
 
@@ -135,7 +139,6 @@ namespace Daisy {
 		}
 	}
 
-
 	void JSValue::release() {
 		DAISY_JSVALUE_LOCK_GUARD_STATIC;
 
@@ -164,14 +167,17 @@ namespace Daisy {
 						jerry_api_release_string(reinterpret_cast<jerry_api_string_t*>(key));
 					}
 				} else if (js_value_type == JERRY_API_DATA_TYPE_OBJECT) {
-					const auto api_object_ptr = reinterpret_cast<jerry_api_object_t*>(key);
-					const auto position = JSObject::js_object_external_functions_map__.find(api_object_ptr);
-					if (position != JSObject::js_object_external_functions_map__.end()) {
+					if (!IsGlobalObject()) {
+						const auto api_object_ptr = reinterpret_cast<jerry_api_object_t*>(key);
 						JSObject::js_object_external_functions_map__.erase(api_object_ptr);
 						JSObject::js_object_external_constructors_map__.erase(api_object_ptr);
-					}
-					if (js_value_managed__) {
-						jerry_api_release_object(api_object_ptr);
+						JSObject::js_object_properties_map__.erase(api_object_ptr);
+						if (js_value_managed__) {
+							std::uintptr_t private_ptr;
+							jerry_api_get_object_native_handle(api_object_ptr, &private_ptr);
+							JSObject::FinalizePrivateData(private_ptr);
+							jerry_api_release_object(api_object_ptr);
+						}
 					}
 				}
 			} else {
