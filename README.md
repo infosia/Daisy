@@ -2,6 +2,8 @@
 
 Daisy is a C++11 wrapper and binding for [JerryScript](https://github.com/Samsung/jerryscript) inspired by [HAL](https://github.com/appcelerator/HAL), which mainly targets mobile platform such as iOS/Android.
 
+> **EXPERIMENTAL: DO NOT USE IN PRODUCTION YET.**
+
 ## Prerequisites
 
 ### OS X
@@ -52,3 +54,9 @@ auto js_value = js_context.JSEvaluateScript("'Hello, World!';");
 XCTAssertTrue(js_value.IsString());
 XCTAssertEqual("Hello, World!", static_cast<std::string>(js_value));
 ```
+
+## TODO
+
+- JSExport property enumeration
+- JSExport property getter/setter callback
+- Logger
