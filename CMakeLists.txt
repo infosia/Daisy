@@ -20,8 +20,25 @@ endif()
 cmake_minimum_required(VERSION 3.0.0)
 
 project(Daisy)
-
 set(Daisy_VERSION 0.1.0)
+
+execute_process(COMMAND git symbolic-ref -q HEAD
+                WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+                OUTPUT_VARIABLE JERRY_GIT_BRANCH
+                OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(COMMAND git rev-parse HEAD
+                WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+                OUTPUT_VARIABLE JERRY_GIT_COMMIT
+                OUTPUT_STRIP_TRAILING_WHITESPACE)
+# Get build date
+execute_process(COMMAND date +%d/%m/%Y
+                OUTPUT_VARIABLE JERRY_BUILD_DATE
+                OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+set(DEFINES_JERRY
+    JERRY_BUILD_DATE="${JERRY_BUILD_DATE}"
+    JERRY_COMMIT_HASH="${JERRY_GIT_COMMIT}"
+    JERRY_BRANCH_NAME="${JERRY_GIT_BRANCH}")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE ON)
@@ -153,7 +170,7 @@ target_include_directories(Daisy PUBLIC
 
 include(GenerateExportHeader)
 generate_export_header(Daisy)
-target_compile_definitions(Daisy PRIVATE Daisy_EXPORTS)
+target_compile_definitions(Daisy PRIVATE Daisy_EXPORTS ${DEFINES_JERRY})
 
 set_property(TARGET Daisy PROPERTY VERSION ${Daisy_VERSION})
 set_property(TARGET Daisy PROPERTY SOVERSION 0)
